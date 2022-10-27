@@ -55,3 +55,11 @@ c) Stop GlassFish local server:
 ## Licenses
 
 (TODO)
+
+## Additional Resources
+
+```bash
+https://blogs.oracle.com/javamagazine/post/transition-from-java-ee-to-jakarta-ee
+
+http://www.mastertheboss.com/jboss-frameworks/resteasy/getting-started-with-jakarta-restful-services/
+````
