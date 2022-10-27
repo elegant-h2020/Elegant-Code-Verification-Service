@@ -3,39 +3,49 @@ package uk.ac.manchester.codeverification.service.elegant.api;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
+import uk.ac.manchester.codeverification.service.elegant.jbmc.JBMC;
+import uk.ac.manchester.codeverification.service.elegant.jbmc.LinuxJBMC;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 
-@Path("/hello-world")
+@Path("/service")
 public class ElegantCodeVerificationService {
-    static Process process;
-    static boolean isWindows = System.getProperty("os.name").toLowerCase().startsWith("windows");
-    static String homeDirectory = System.getProperty("user.home");
 
+    private static final String OS;
+    private static JBMC jbmc;
+
+    static {
+        OS = System.getProperty("os.name").toLowerCase();
+    }
+
+    private void initService() throws IOException, InterruptedException {
+
+        if (OS.startsWith("linux")) {
+            jbmc = new LinuxJBMC();
+        } else {
+            throw new UnsupportedOperationException("Code verification Service is currently not supported for " + OS + ".");
+        }
+    }
+
+    /**
+     * Starting Point of the Code Verification Service.
+     */
     @GET
     @Produces("text/plain")
-    public String hello() throws IOException, InterruptedException {
+    public String serviceStart() throws IOException, InterruptedException {
 
-        if (isWindows) {
-            process = Runtime.getRuntime().exec(String.format("cmd.exe /c dir %s", homeDirectory));
-        } else {
-            process = Runtime.getRuntime().exec(String.format("sh -c ls %s", homeDirectory));
-        }
+        initService();
 
-        int exitCode = process.waitFor();
-        assert exitCode == 0;
-
-
-        return "Hello, World!, Exit code = " + exitCode;
+        return "Code Verification Service : START!"                                     + "\n" +
+               "Directory: "                + jbmc.getHomeDirectory().getAbsolutePath() + "\n" +
+               "Environment Variables: "    + jbmc.getEnvironmentVariables()            + "\n" +
+               "Process Output: "           + jbmc.getProcessOutput();
     }
 
     @GET
-    @Path("hello")
+    @Path("submit")
     @Produces("text/plain")
-    public String hello2() throws IOException, InterruptedException {
-        process = Runtime.getRuntime().exec(String.format("ls", homeDirectory));
-        return "Hello2!, Exit code = " + process.waitFor();
+    public String submit() {
+        return "This will be a submit request!";//, Exit code = " + process.waitFor();
     }
 }
