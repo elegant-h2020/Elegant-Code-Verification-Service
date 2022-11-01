@@ -36,10 +36,12 @@ public class ElegantCodeVerificationService {
 
         initService();
 
-        return "Code Verification Service : START!"                                     + "\n" +
-               "Directory: "                + jbmc.getHomeDirectory().getAbsolutePath() + "\n" +
-               "Environment Variables: "    + jbmc.getEnvironmentVariables()            + "\n" +
-               "Process Output: "           + jbmc.getProcessOutput();
+        return "Code Verification Service : START!"                                 + "\n" +
+                "PATH_TO_JBMC = "   + jbmc.getEnvironmentVariable("PATH_TO_JBMC")   + "\n" +
+                "WORKDIR = "        + jbmc.getEnvironmentVariable("WORKDIR")        + "\n" +
+                "JBMC_BIN = "       + jbmc.getEnvironmentVariable("JBMC_BIN")       + "\n" +
+                "JAVA_MODEL = "     + jbmc.getEnvironmentVariable("JAVA_MODEL")     + "\n" +
+                "CLASSPATH = "      + jbmc.getEnvironmentVariable("CLASSPATH")      + "\n";
     }
 
     @GET

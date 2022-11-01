@@ -1,10 +1,13 @@
 package uk.ac.manchester.codeverification.service.elegant.jbmc;
 
 import java.io.*;
+import java.util.Map;
 
 public class LinuxJBMC extends JBMC {
 
-    String[] environmentVariables;
+    ProcessBuilder      jbmcProcessBuilder;
+    Process             jbmcProcess;
+    Map<String, String> environment;
 
     static String cmdPrefix = "sh -c ";
 
@@ -19,17 +22,15 @@ public class LinuxJBMC extends JBMC {
     }
 
     @Override
-    public void setUpJBMCEnvironment() throws IOException, InterruptedException {
+    public void setUpJBMCEnvironment() {
 
-        environmentVariables = new String[] {
-                "WORKDIR="      + workDirectory.getAbsolutePath(),
-                "JBMC_BIN="     + workDirectory.getAbsolutePath() + "/jbmc/src/jbmc/jbmc",
-                "JAVA_MODEL="   + workDirectory.getAbsolutePath() + "/jbmc/lib/java-models-library/target/core-models.jar"};
+        environment = jbmcProcessBuilder.environment();
 
-        //process = Runtime.getRuntime().exec(String.format("sh -c ls %s", homeDirectory));
-        String jbmcCommand = "$JBMC_BIN --classpath $JAVA_MODEL:./test-codes my.petty.examples.Simple --unwind 5";
-        process = Runtime.getRuntime().exec(cmdPrefix + jbmcCommand, environmentVariables, workDirectory);
-        process.waitFor();
+        environment.put("PATH_TO_JBMC", "/Elegant/CBMC");
+        environment.put("WORKDIR", System.getProperty("user.home") + environment.get("PATH_TO_JBMC"));
+        environment.put("JBMC_BIN", environment.get("WORKDIR") + "/jbmc/src/jbmc/jbmc");
+        environment.put("JAVA_MODEL", environment.get("WORKDIR") + "/jbmc/lib/java-models-library/target/core-models.jar");
+        environment.put("CLASSPATH", environment.get("JAVA_MODEL") + ":./test-codes");
     }
 
     @Override
@@ -57,15 +58,7 @@ public class LinuxJBMC extends JBMC {
     }
 
     @Override
-    public File getHomeDirectory() {
-        return homeDirectory;
-    }
-
-    @Override
-    public String getEnvironmentVariables() {
-        StringBuilder sb = new StringBuilder();
-        for (String str : environmentVariables)
-            sb.append(str).append(", ");
-        return sb.substring(0, sb.length() - 1);
+    public String getEnvironmentVariable(String key) {
+        return environment.get(key);
     }
 }
