@@ -15,6 +15,10 @@ Code Verification Webservice.
 
 (TODO): Add instructions. Tested with:  openjdk-8u222-b10, oraclejdk-8u341.
 
+### 2. CBMC
+
+(TODO): Add instructions and fix paths.
+
 ## Installation
 
 ### 1. Clone the project:
@@ -46,7 +50,33 @@ b) Start GlassFish local server:
 ./bin/asadmin start-domain domain1
 ```
 
-c) Stop GlassFish local server:
+### 4. Utilize the API:
+
+a) Start and initialize the service
+
+```bash
+curl http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification
+```
+
+b) Register a new entry for verification:
+
+```bash
+curl http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/getEntry?entryId=<ID>
+```
+
+c) Remove an entry:
+
+```bash
+curl http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/removeEntry?entryId=<ID>
+```
+
+d) List all known verification entries:
+
+```bash
+curl http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/getEntries
+```
+
+### 3. Stop the GlassFish server
 
 ```bash
 ./bin/asadmin stop-domain domain1
