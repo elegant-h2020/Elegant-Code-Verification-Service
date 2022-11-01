@@ -1,14 +1,12 @@
 package uk.ac.manchester.codeverification.service.elegant.api;
 
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import uk.ac.manchester.codeverification.service.elegant.jbmc.JBMC;
 import uk.ac.manchester.codeverification.service.elegant.jbmc.LinuxJBMC;
 
 import java.io.*;
 
-@Path("/service")
+@Path("/verification")
 public class ElegantCodeVerificationService {
 
     private static final String OS;
@@ -44,11 +42,44 @@ public class ElegantCodeVerificationService {
                 "CLASSPATH = "      + jbmc.getEnvironmentVariable("CLASSPATH")      + "\n";
     }
 
-    @GET
-    @Path("submit")
+    /**
+     * Register a new entry for verification.
+     */
+    @POST
+    @Path("newEntry")
     @Produces("text/plain")
     public String submit() throws IOException, InterruptedException {
         jbmc.verifyCode("my.petty.examples.Simple");
         return "Process Output: "  + jbmc.getVerificationResult();
+    }
+
+    /**
+     * Get the verification outcome of an entry.
+     */
+    @GET
+    @Path("getEntry")
+    @Produces("text/plain")
+    public String getEntry(@QueryParam("entryId") String entryId) {
+        return "getEntry = " + entryId;
+    }
+
+    /**
+     * Remove an entry.
+     */
+    @DELETE
+    @Path("removeEntry")
+    @Produces("text/plain")
+    public String removeEntry(@QueryParam("entryId") String entryId) {
+        return "removeEntry = " + entryId;
+    }
+
+    /**
+     * List all known verification entries.
+     */
+    @GET
+    @Path("getEntities")
+    @Produces("text/plain")
+    public String getEntities() {
+        return "getEntities";
     }
 }
