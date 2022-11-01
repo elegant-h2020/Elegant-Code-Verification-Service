@@ -31,7 +31,8 @@ public class LinuxJBMC implements JBMC {
         environment.put("WORKDIR", System.getProperty("user.home") + environment.get("PATH_TO_JBMC"));
         environment.put("JBMC_BIN", environment.get("WORKDIR") + "/jbmc/src/jbmc/jbmc");
         environment.put("JAVA_MODEL", environment.get("WORKDIR") + "/jbmc/lib/java-models-library/target/core-models.jar");
-        environment.put("CLASSPATH", environment.get("JAVA_MODEL") + ":./test-codes");
+        String testCasesPath = System.getProperty("user.home") + "/Elegant/Elegant-Code-Verification-Service/test-cases";
+        environment.put("CLASSPATH", environment.get("JAVA_MODEL") + ":" + testCasesPath);
     }
 
     @Override
