@@ -18,7 +18,7 @@ public class ElegantCodeVerificationService {
         OS = System.getProperty("os.name").toLowerCase();
     }
 
-    private void initService() throws IOException, InterruptedException {
+    private void initService() {
 
         if (OS.startsWith("linux")) {
             jbmc = new LinuxJBMC();
@@ -47,7 +47,8 @@ public class ElegantCodeVerificationService {
     @GET
     @Path("submit")
     @Produces("text/plain")
-    public String submit() {
-        return "This will be a submit request!";//, Exit code = " + process.waitFor();
+    public String submit() throws IOException, InterruptedException {
+        jbmc.verifyCode("my.petty.examples.Simple");
+        return "Process Output: "  + jbmc.getVerificationResult();
     }
 }
