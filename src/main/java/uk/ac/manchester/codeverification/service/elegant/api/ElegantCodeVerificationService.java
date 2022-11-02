@@ -1,6 +1,8 @@
 package uk.ac.manchester.codeverification.service.elegant.api;
 
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+import uk.ac.manchester.codeverification.service.elegant.input.Klass;
 import uk.ac.manchester.codeverification.service.elegant.jbmc.JBMC;
 import uk.ac.manchester.codeverification.service.elegant.jbmc.LinuxJBMC;
 
@@ -58,10 +60,11 @@ public class ElegantCodeVerificationService {
      */
     @POST
     @Path("newEntry")
-    @Produces("text/plain")
-    public String submit() throws IOException, InterruptedException {
+    @Produces(MediaType.TEXT_PLAIN)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public String submit(Klass klass) throws IOException, InterruptedException {
         isInitialized();
-        jbmc.verifyCode("my.petty.examples.Simple");
+        jbmc.verifyCode(klass);
         return "Process Output: "  + jbmc.getVerificationResult();
     }
 

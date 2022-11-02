@@ -1,5 +1,7 @@
 package uk.ac.manchester.codeverification.service.elegant.jbmc;
 
+import uk.ac.manchester.codeverification.service.elegant.input.Klass;
+
 import java.io.*;
 import java.util.Map;
 
@@ -36,8 +38,8 @@ public class LinuxJBMC implements JBMC {
     }
 
     @Override
-    public void verifyCode(String mainClass) throws IOException, InterruptedException {
-        final String program = "my.petty.examples.Simple";
+    public void verifyCode(Klass mainClass) throws IOException, InterruptedException {
+        final String program = mainClass.getClassname();
         jbmcProcessBuilder.command(environment.get("JBMC_BIN"), "--classpath", environment.get("CLASSPATH"), program, "--unwind", "5");
         this.jbmcProcess = jbmcProcessBuilder.start();
         int exitCode = jbmcProcess.waitFor();
