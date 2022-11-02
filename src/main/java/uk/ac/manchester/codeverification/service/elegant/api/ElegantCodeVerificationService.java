@@ -11,6 +11,7 @@ public class ElegantCodeVerificationService {
 
     private static final String OS;
     private static JBMC jbmc;
+    private static boolean isInitialized = false;
 
     static {
         OS = System.getProperty("os.name").toLowerCase();
@@ -23,6 +24,7 @@ public class ElegantCodeVerificationService {
         } else {
             throw new UnsupportedOperationException("Code verification Service is currently not supported for " + OS + ".");
         }
+        isInitialized = true;
     }
 
     /**
@@ -43,12 +45,22 @@ public class ElegantCodeVerificationService {
     }
 
     /**
+     * Ensures that any API call can be safely utilized even prior to the explicit initialization of the service.
+     */
+    private void isInitialized() throws IOException, InterruptedException {
+        if (!isInitialized) {
+            serviceStart();
+        }
+    }
+
+    /**
      * Register a new entry for verification.
      */
     @POST
     @Path("newEntry")
     @Produces("text/plain")
     public String submit() throws IOException, InterruptedException {
+        isInitialized();
         jbmc.verifyCode("my.petty.examples.Simple");
         return "Process Output: "  + jbmc.getVerificationResult();
     }
@@ -59,7 +71,8 @@ public class ElegantCodeVerificationService {
     @GET
     @Path("getEntry")
     @Produces("text/plain")
-    public String getEntry(@QueryParam("entryId") String entryId) {
+    public String getEntry(@QueryParam("entryId") String entryId) throws IOException, InterruptedException {
+        isInitialized();
         return "getEntry = " + entryId;
     }
 
@@ -69,7 +82,8 @@ public class ElegantCodeVerificationService {
     @DELETE
     @Path("removeEntry")
     @Produces("text/plain")
-    public String removeEntry(@QueryParam("entryId") String entryId) {
+    public String removeEntry(@QueryParam("entryId") String entryId) throws IOException, InterruptedException {
+        isInitialized();
         return "removeEntry = " + entryId;
     }
 
@@ -79,7 +93,8 @@ public class ElegantCodeVerificationService {
     @GET
     @Path("getEntities")
     @Produces("text/plain")
-    public String getEntities() {
+    public String getEntities() throws IOException, InterruptedException {
+        isInitialized();
         return "getEntities";
     }
 }
