@@ -11,19 +11,30 @@ Code Verification Webservice.
 
 ## Requirements
 
-### 1. JDK 8
+### 1. CBMC
+
+```bash
+sudo apt-get install g++ gcc flex bison make git curl patch maven jq
+mkdir ~/Elegant
+git clone git@github.com:elegant-h2020/cbmc.git
+git checkout cbmc-5.58.1
+cd ~/Elegant/CBMC/
+make -C src minisat2-download
+make -C src
+make -C jbmc/src setup-submodules
+make -C jbmc/src
+```
+
+### 2. JDK 8
 
 (TODO): Add instructions. Tested with:  openjdk-8u222-b10, oraclejdk-8u341.
-
-### 2. CBMC
-
-(TODO): Add instructions and fix paths.
 
 ## Installation
 
 ### 1. Clone the project:
 
 ```bash 
+cd ~/Elegant
 git clone https://github.com/elegant-h2020/Elegant-Code-Verification-Service.git
 ```
 
@@ -38,10 +49,11 @@ mvn clean install
 a) Download GlassFish 6.0.0:
 
 ```bash
-$ wget 'https://www.eclipse.org/downloads/download.php?file=/ee4j/glassfish/glassfish-6.0.0.zip' -O glassfish-6.0.0.zip
-$ unzip glassfish-6.0.0.zip
-$ cd glassfish-6.0.0.zip
-$ echo "AS_JAVA=<path-to-JDK8>" >> ./glassfish/config/asenv.conf
+cd ~
+wget 'https://www.eclipse.org/downloads/download.php?file=/ee4j/glassfish/glassfish-6.0.0.zip' -O glassfish-6.0.0.zip
+unzip glassfish-6.0.0.zip
+cd glassfish-6.0.0.zip
+echo "AS_JAVA=<path-to-JDK8>" >> ./glassfish/config/asenv.conf
 ```
 
 b) Start GlassFish local server:
