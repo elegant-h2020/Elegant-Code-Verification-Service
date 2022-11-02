@@ -73,6 +73,18 @@ curl http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/ve
 b) Register a new entry for verification:
 
 ```bash
+curl --header "Content-Type: application/json" --request POST  --data '{"classname":"<path.to.main>"}' http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newEntry
+````
+
+	e.g.: to verify the example code (`test-cases/my/petty/examples/Simple.java`)
+
+```bash
+curl --header "Content-Type: application/json" --request POST  --data '{"classname":"my.petty.examples.Simple"}' http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newEntry
+```
+
+c) Get the verification outcome of an entry:
+
+```bash
 curl http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/getEntry?entryId=<ID>
 ```
 
