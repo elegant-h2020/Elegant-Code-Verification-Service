@@ -16,11 +16,13 @@ Code Verification Webservice.
 ```bash
 sudo apt-get install g++ gcc flex bison make git curl patch maven jq
 mkdir ~/Elegant
-git clone git@github.com:elegant-h2020/cbmc.git
+git clone git@github.com:elegant-h2020/cbmc.git Elegant/CBMC
+cd ~/Elegant/CBMC
 git checkout cbmc-5.58.1
-cd ~/Elegant/CBMC/
+
 make -C src minisat2-download
 make -C src
+
 make -C jbmc/src setup-submodules
 make -C jbmc/src
 ```
@@ -35,12 +37,13 @@ make -C jbmc/src
 
 ```bash 
 cd ~/Elegant
-git clone https://github.com/elegant-h2020/Elegant-Code-Verification-Service.git
+git clone git@github.com:elegant-h2020/Elegant-Code-Verification-Service.git
 ```
 
 ### 2. Build the service:
 
 ```bash
+cd ~/Elegant/Elegant-Code-Verification-Service
 mvn clean install
 ```
 
@@ -52,7 +55,7 @@ a) Download GlassFish 6.0.0:
 cd ~
 wget 'https://www.eclipse.org/downloads/download.php?file=/ee4j/glassfish/glassfish-6.0.0.zip' -O glassfish-6.0.0.zip
 unzip glassfish-6.0.0.zip
-cd glassfish-6.0.0.zip
+cd glassfish-6.0.0
 echo "AS_JAVA=<path-to-JDK8>" >> ./glassfish/config/asenv.conf
 ```
 
@@ -76,7 +79,7 @@ b) Register a new entry for verification:
 curl --header "Content-Type: application/json" --request POST  --data '{"classname":"<path.to.main>"}' http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newEntry
 ````
 
-	e.g.: to verify the example code (`test-cases/my/petty/examples/Simple.java`)
+e.g.: to verify the example code (`test-cases/my/petty/examples/Simple.java`)
 
 ```bash
 curl --header "Content-Type: application/json" --request POST  --data '{"classname":"my.petty.examples.Simple"}' http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newEntry
