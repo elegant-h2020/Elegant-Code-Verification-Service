@@ -5,6 +5,7 @@ import jakarta.ws.rs.core.MediaType;
 import uk.ac.manchester.codeverification.service.elegant.input.Klass;
 import uk.ac.manchester.codeverification.service.elegant.jbmc.JBMC;
 import uk.ac.manchester.codeverification.service.elegant.jbmc.LinuxJBMC;
+import uk.ac.manchester.codeverification.service.elegant.output.VerificationEntries;
 
 import java.io.*;
 
@@ -13,6 +14,7 @@ public class ElegantCodeVerificationService {
 
     private static final String OS;
     private static JBMC jbmc;
+    private static VerificationEntries verificationEntries;
     private static boolean isInitialized = false;
 
     static {
@@ -20,12 +22,7 @@ public class ElegantCodeVerificationService {
     }
 
     private void initService() {
-
-        if (OS.startsWith("linux")) {
-            jbmc = new LinuxJBMC();
-        } else {
-            throw new UnsupportedOperationException("Code verification Service is currently not supported for " + OS + ".");
-        }
+        verificationEntries = new VerificationEntries();
         isInitialized = true;
     }
 
@@ -55,6 +52,14 @@ public class ElegantCodeVerificationService {
         }
     }
 
+    private void newJBMCInstance() {
+        if (OS.startsWith("linux")) {
+            jbmc = new LinuxJBMC();
+        } else {
+            throw new UnsupportedOperationException("Code verification Service is currently not supported for " + OS + ".");
+        }
+    }
+
     /**
      * Register a new entry for verification.
      */
@@ -64,8 +69,10 @@ public class ElegantCodeVerificationService {
     @Consumes(MediaType.APPLICATION_JSON)
     public String submit(Klass klass) throws IOException, InterruptedException {
         isInitialized();
+        newJBMCInstance();
         jbmc.verifyCode(klass);
-        return "Process Output: "  + jbmc.getVerificationResult();
+        int id = verificationEntries.registerEntry(jbmc);
+        return "New code verification request has been registered (#" + id + ")\n" + jbmc.getOutput() + "\n";
     }
 
     /**
@@ -76,7 +83,16 @@ public class ElegantCodeVerificationService {
     @Produces("text/plain")
     public String getEntry(@QueryParam("entryId") String entryId) throws IOException, InterruptedException {
         isInitialized();
-        return "getEntry = " + entryId;
+        int id = Integer.parseInt(entryId);
+        jbmc = verificationEntries.getEntry(id);
+
+        if (jbmc != null) {
+            return "Code verification result of entry #" + id + " : \n" +
+                    "(exit code:" + jbmc.getExitCode() + ")\n" +
+                    jbmc.getOutput() + "\n";
+        } else {
+            return "Invalid entry id.\n";
+        }
     }
 
     /**

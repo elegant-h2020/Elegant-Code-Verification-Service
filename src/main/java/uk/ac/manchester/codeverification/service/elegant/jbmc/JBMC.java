@@ -6,9 +6,12 @@ import java.io.IOException;
 
 public interface JBMC {
 
-    public abstract void    setUpJBMCEnvironment() throws IOException, InterruptedException;
-    public abstract void    verifyCode(Klass mainClass) throws IOException, InterruptedException;
-    public abstract String  getVerificationResult() throws IOException;
-    public abstract String  getEnvironmentVariable(String var);
+    void    setUpJBMCEnvironment()              throws IOException, InterruptedException;
+    void    verifyCode(Klass mainClass)         throws IOException, InterruptedException;
+    String  getVerificationResult()             throws IOException;
+    String  getEnvironmentVariable(String var);
+
+    int     getExitCode();
+    String  getOutput();
 
 }

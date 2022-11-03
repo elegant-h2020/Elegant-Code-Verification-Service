@@ -8,8 +8,11 @@ import java.util.Map;
 public class LinuxJBMC implements JBMC {
 
     ProcessBuilder      jbmcProcessBuilder;
-    Process             jbmcProcess;
     Map<String, String> environment;
+
+    Process             jbmcProcess;
+    int                 exitCode;
+    String              output;
 
      // TODO: run with sh for compatibility.
      //static String cmdPrefix = "sh -c ";
@@ -37,14 +40,17 @@ public class LinuxJBMC implements JBMC {
         environment.put("CLASSPATH", environment.get("JAVA_MODEL") + ":" + testCasesPath);
     }
 
+    /**
+     * Calls a Linux JBMC process to verify a Java program.
+     * @param mainClass is the main class of the program to be verified.
+     */
     @Override
     public void verifyCode(Klass mainClass) throws IOException, InterruptedException {
         final String program = mainClass.getClassname();
         jbmcProcessBuilder.command(environment.get("JBMC_BIN"), "--classpath", environment.get("CLASSPATH"), program, "--unwind", "5");
         this.jbmcProcess = jbmcProcessBuilder.start();
-        int exitCode = jbmcProcess.waitFor();
-        assert exitCode == 0;
-        System.out.println(jbmcProcessBuilder.command());
+        this.exitCode = jbmcProcess.waitFor();
+        this.output = getVerificationResult();
     }
 
     @Override
@@ -74,5 +80,15 @@ public class LinuxJBMC implements JBMC {
     @Override
     public String getEnvironmentVariable(String key) {
         return environment.get(key);
+    }
+
+    @Override
+    public int getExitCode() {
+        return exitCode;
+    }
+
+    @Override
+    public String getOutput() {
+        return output;
     }
 }
