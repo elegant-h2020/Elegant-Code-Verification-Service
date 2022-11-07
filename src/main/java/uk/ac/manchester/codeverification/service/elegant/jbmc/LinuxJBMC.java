@@ -47,14 +47,21 @@ public class LinuxJBMC implements JBMC {
     @Override
     public void verifyCode(Klass mainClass) throws IOException, InterruptedException {
         final String program = mainClass.getClassname();
-        jbmcProcessBuilder.command(environment.get("JBMC_BIN"), "--classpath", environment.get("CLASSPATH"), program, "--unwind", "5");
+        jbmcProcessBuilder.command(environment.get("JBMC_BIN"), "--json-ui", "--classpath", environment.get("CLASSPATH"), program, "--unwind", "5");
         this.jbmcProcess = jbmcProcessBuilder.start();
-        this.exitCode = jbmcProcess.waitFor();
         this.output = getVerificationResult();
+        this.exitCode = jbmcProcess.waitFor();
     }
 
     @Override
     public String getVerificationResult() throws IOException {
+        /*
+        // store the output as a Json array
+        InputStream inputStream = this.jbmcProcess.getInputStream();
+        InputStreamReader reader = new InputStreamReader(inputStream);
+        return JsonParser.parseReader(reader).getAsJsonArray();
+        */
+
         StringBuilder sb = new StringBuilder();
 
         String line;
@@ -64,7 +71,6 @@ public class LinuxJBMC implements JBMC {
                 sb.append(line + System.lineSeparator());
             }
         }
-        sb.append(" <endOfInputStream> ");
 
         //Read the input stream connected to the error output of the subprocess.
         try (BufferedReader processOutputReader = new BufferedReader(new InputStreamReader(jbmcProcess.getErrorStream()));) {
@@ -72,7 +78,6 @@ public class LinuxJBMC implements JBMC {
                 sb.append(line + System.lineSeparator());
             }
         }
-        sb.append(" <endOfErrorStream> ");
 
         return sb.substring(0, sb.length() - 1);
     }
@@ -91,4 +96,13 @@ public class LinuxJBMC implements JBMC {
     public String getOutput() {
         return output;
     }
+
+    /*public void iterateOverJsonObjects() {
+        // prints all the json objects in the json array
+        ListIterator l = this.output.deepCopy().asList().listIterator();
+        while (l.hasNext()) {
+            JsonObject j = (JsonObject)l.next();
+            System.out.println("Iteration: " + j);
+        }
+    }*/
 }

@@ -2,6 +2,7 @@ package uk.ac.manchester.codeverification.service.elegant.api;
 
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import uk.ac.manchester.codeverification.service.elegant.input.Klass;
 import uk.ac.manchester.codeverification.service.elegant.jbmc.JBMC;
 import uk.ac.manchester.codeverification.service.elegant.jbmc.LinuxJBMC;
@@ -80,18 +81,24 @@ public class ElegantCodeVerificationService {
      */
     @GET
     @Path("getEntry")
-    @Produces("text/plain")
-    public String getEntry(@QueryParam("entryId") String entryId) throws IOException, InterruptedException {
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getEntry(@QueryParam("entryId") String entryId) throws IOException, InterruptedException {
         isInitialized();
         int id = Integer.parseInt(entryId);
         jbmc = verificationEntries.getEntry(id);
 
         if (jbmc != null) {
-            return "Code verification result of entry #" + id + " : \n" +
-                    "(exit code:" + jbmc.getExitCode() + ")\n" +
-                    jbmc.getOutput() + "\n";
+            return Response
+                    .status(Response.Status.OK)
+                    .entity(jbmc.getOutput())
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
         } else {
-            return "Invalid entry id.\n";
+            return Response
+                    .status(Response.Status.NOT_FOUND)
+                    .type(MediaType.TEXT_PLAIN)
+                    .entity("Invalid Entry!!")
+                    .build();
         }
     }
 
