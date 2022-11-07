@@ -1,6 +1,4 @@
-package uk.ac.manchester.codeverification.service.elegant.output;
-
-import uk.ac.manchester.codeverification.service.elegant.jbmc.JBMC;
+package uk.ac.manchester.codeverification.service.elegant.jbmc;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +10,7 @@ public class VerificationEntries {
 
     // the id is utilized as unique index.
     int id;
-    Map<Integer, JBMC> entries;
+    Map<Integer, Entry> entries;
 
     public VerificationEntries() {
         this.id = 0;
@@ -22,13 +20,13 @@ public class VerificationEntries {
     /**
      * Register a new entry and return the entry id.
      */
-    public int registerEntry(JBMC j) {
+    public int registerEntry(Entry e) {
         id++;
-        entries.put(id, j);
+        entries.put(id, e);
         return id;
     }
 
-    public JBMC getEntry(int id) {
+    public Entry getEntry(int id) {
         return entries.get(id);
     }
 }

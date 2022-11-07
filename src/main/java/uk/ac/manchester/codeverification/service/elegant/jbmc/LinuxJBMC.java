@@ -44,7 +44,7 @@ public class LinuxJBMC implements JBMC {
     }
 
     /**
-     * Calls a Linux JBMC process to verify a Java program.
+     * Starts a Linux JBMC process to verify a Java program.
      * @param mainClass is the main class of the program to be verified.
      */
     @Override
@@ -52,8 +52,6 @@ public class LinuxJBMC implements JBMC {
         final String program = mainClass.getClassname();
         jbmcProcessBuilder.command(environment.get("JBMC_BIN"), "--json-ui", "--classpath", environment.get("CLASSPATH"), program, "--unwind", "5");
         this.jbmcProcess = jbmcProcessBuilder.start();
-        this.output = getVerificationResult();
-        this.exitCode = jbmcProcess.waitFor();
     }
 
     @Override
@@ -108,4 +106,9 @@ public class LinuxJBMC implements JBMC {
             System.out.println("Iteration: " + j);
         }
     }*/
+
+    @Override
+    public int waitFor() throws InterruptedException {
+        return this.jbmcProcess.waitFor();
+    }
 }

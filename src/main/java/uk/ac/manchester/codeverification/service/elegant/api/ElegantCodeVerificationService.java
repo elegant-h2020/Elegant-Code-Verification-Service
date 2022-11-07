@@ -6,7 +6,8 @@ import jakarta.ws.rs.core.Response;
 import uk.ac.manchester.codeverification.service.elegant.input.Klass;
 import uk.ac.manchester.codeverification.service.elegant.jbmc.JBMC;
 import uk.ac.manchester.codeverification.service.elegant.jbmc.LinuxJBMC;
-import uk.ac.manchester.codeverification.service.elegant.output.VerificationEntries;
+import uk.ac.manchester.codeverification.service.elegant.jbmc.VerificationEntries;
+import uk.ac.manchester.codeverification.service.elegant.jbmc.Entry;
 
 import java.io.*;
 
@@ -69,9 +70,16 @@ public class ElegantCodeVerificationService {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response submit(Klass klass) throws IOException, InterruptedException {
         isInitialized();
+
+        // verify
         newJBMCInstance();
         jbmc.verifyCode(klass);
-        int entryId = verificationEntries.registerEntry(jbmc);
+
+        // store the result as a new Entry
+        String output = jbmc.getVerificationResult();
+        int exitCode = jbmc.waitFor();
+        int entryId = verificationEntries.registerEntry(new Entry(klass, output, exitCode));
+
         return Response
                 .status(Response.Status.ACCEPTED)
                 .type(MediaType.TEXT_PLAIN_TYPE)
@@ -88,12 +96,12 @@ public class ElegantCodeVerificationService {
     public Response getEntry(@QueryParam("entryId") String entryId) throws IOException, InterruptedException {
         isInitialized();
         int id = Integer.parseInt(entryId);
-        jbmc = verificationEntries.getEntry(id);
+        Entry e = verificationEntries.getEntry(id);
 
-        if (jbmc != null) {
+        if (e != null) {
             return Response
                     .status(Response.Status.OK)
-                    .entity(jbmc.getOutput())
+                    .entity(e.getOutput())
                     .type(MediaType.APPLICATION_JSON)
                     .build();
         } else {

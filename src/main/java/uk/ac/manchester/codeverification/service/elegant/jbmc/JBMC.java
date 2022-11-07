@@ -14,4 +14,5 @@ public interface JBMC {
     int     getExitCode();
     String  getOutput();
 
+    int     waitFor()                           throws InterruptedException;
 }
