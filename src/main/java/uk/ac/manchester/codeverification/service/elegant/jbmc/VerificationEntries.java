@@ -29,4 +29,8 @@ public class VerificationEntries {
     public Entry getEntry(int id) {
         return entries.get(id);
     }
+
+    public Map<Integer, Entry> getEntries() {
+        return entries;
+    }
 }

@@ -126,12 +126,17 @@ public class ElegantCodeVerificationService {
 
     /**
      * List all known verification entries.
+     * TODO: output field in JSON format ?
      */
     @GET
-    @Path("getEntities")
-    @Produces("text/plain")
-    public String getEntities() throws IOException, InterruptedException {
+    @Path("getEntries")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getEntries() throws IOException, InterruptedException {
         isInitialized();
-        return "getEntities";
+        return Response
+                .status(Response.Status.ACCEPTED)
+                .type(MediaType.APPLICATION_JSON_TYPE)
+                .entity(verificationEntries.getEntries())
+                .build();
     }
 }
