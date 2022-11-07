@@ -32,16 +32,15 @@ public class ElegantCodeVerificationService {
      */
     @GET
     @Produces("text/plain")
-    public String serviceStart() throws IOException, InterruptedException {
+    public Response serviceStart() throws IOException, InterruptedException {
 
         initService();
 
-        return "Code Verification Service : START!"                                 + "\n" +
-                "PATH_TO_JBMC = "   + jbmc.getEnvironmentVariable("PATH_TO_JBMC")   + "\n" +
-                "WORKDIR = "        + jbmc.getEnvironmentVariable("WORKDIR")        + "\n" +
-                "JBMC_BIN = "       + jbmc.getEnvironmentVariable("JBMC_BIN")       + "\n" +
-                "JAVA_MODEL = "     + jbmc.getEnvironmentVariable("JAVA_MODEL")     + "\n" +
-                "CLASSPATH = "      + jbmc.getEnvironmentVariable("CLASSPATH")      + "\n";
+        return Response
+                .status(Response.Status.OK)
+                .type(MediaType.TEXT_PLAIN_TYPE)
+                .entity("Code Verification Service : START!\n")
+                .build();
     }
 
     /**
@@ -68,12 +67,16 @@ public class ElegantCodeVerificationService {
     @Path("newEntry")
     @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.APPLICATION_JSON)
-    public String submit(Klass klass) throws IOException, InterruptedException {
+    public Response submit(Klass klass) throws IOException, InterruptedException {
         isInitialized();
         newJBMCInstance();
         jbmc.verifyCode(klass);
-        int id = verificationEntries.registerEntry(jbmc);
-        return "New code verification request has been registered (#" + id + ")\n" + jbmc.getOutput() + "\n";
+        int entryId = verificationEntries.registerEntry(jbmc);
+        return Response
+                .status(Response.Status.ACCEPTED)
+                .type(MediaType.TEXT_PLAIN_TYPE)
+                .entity("New code verification request has been registered (#" + entryId + ")\n")
+                .build();
     }
 
     /**
