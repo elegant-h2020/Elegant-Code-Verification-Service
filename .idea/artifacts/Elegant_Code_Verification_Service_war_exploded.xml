@@ -14,7 +14,7 @@
           <element id="module-output" name="Elegant-Code-Verification-Service" />
         </element>
         <element id="directory" name="lib">
-          <element id="library" level="project" name="Maven: com.google.code.gson:gson:2.10" />
+          <element id="library" level="project" name="Maven: org.glassfish:jakarta.json:2.0.1" />
         </element>
       </element>
       <element id="directory" name="META-INF">

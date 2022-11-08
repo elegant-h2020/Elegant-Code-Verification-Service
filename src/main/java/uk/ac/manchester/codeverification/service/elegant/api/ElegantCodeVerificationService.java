@@ -1,5 +1,6 @@
 package uk.ac.manchester.codeverification.service.elegant.api;
 
+import jakarta.json.JsonStructure;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -76,7 +77,7 @@ public class ElegantCodeVerificationService {
         jbmc.verifyCode(klass);
 
         // store the result as a new Entry
-        String output = jbmc.getVerificationResult();
+        JsonStructure output = jbmc.readOutput();
         int exitCode = jbmc.waitFor();
         long entryId = verificationEntries.registerEntry(new Entry(klass, output, exitCode));
 

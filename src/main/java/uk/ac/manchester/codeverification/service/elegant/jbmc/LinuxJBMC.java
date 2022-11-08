@@ -1,5 +1,6 @@
 package uk.ac.manchester.codeverification.service.elegant.jbmc;
 
+import jakarta.json.*;
 import uk.ac.manchester.codeverification.service.elegant.input.Klass;
 
 import java.io.*;
@@ -55,32 +56,11 @@ public class LinuxJBMC implements JBMC {
     }
 
     @Override
-    public String getVerificationResult() throws IOException {
-        /*
-        // store the output as a Json array
+    public JsonStructure readOutput() {
         InputStream inputStream = this.jbmcProcess.getInputStream();
-        InputStreamReader reader = new InputStreamReader(inputStream);
-        return JsonParser.parseReader(reader).getAsJsonArray();
-        */
+        JsonReader jsonReader = Json.createReader(new InputStreamReader(inputStream));
 
-        StringBuilder sb = new StringBuilder();
-
-        String line;
-        //Read the input stream connected to the normal output of the subprocess.
-        try (BufferedReader processOutputReader = new BufferedReader(new InputStreamReader(this.jbmcProcess.getInputStream()));) {
-            while ((line = processOutputReader.readLine()) != null) {
-                sb.append(line + System.lineSeparator());
-            }
-        }
-
-        //Read the input stream connected to the error output of the subprocess.
-        try (BufferedReader processOutputReader = new BufferedReader(new InputStreamReader(jbmcProcess.getErrorStream()));) {
-            while ((line = processOutputReader.readLine()) != null) {
-                sb.append(line + System.lineSeparator());
-            }
-        }
-
-        return sb.substring(0, sb.length() - 1);
+        return jsonReader.read();
     }
 
     @Override

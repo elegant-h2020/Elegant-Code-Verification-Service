@@ -1,5 +1,6 @@
 package uk.ac.manchester.codeverification.service.elegant.jbmc;
 
+import jakarta.json.JsonStructure;
 import uk.ac.manchester.codeverification.service.elegant.input.Klass;
 
 public class Entry {
@@ -8,17 +9,17 @@ public class Entry {
      */
     private long id;
     private Klass   klass;
-    private String  output;
+    private JsonStructure  output;
     private int     exitCode;
 
-    public Entry(Klass klass, String output, int exitCode) {
+    public Entry(Klass klass, JsonStructure output, int exitCode) {
         this.id = -99;
         this.klass = klass;
         this.output = output;
         this.exitCode = exitCode;
     }
 
-    public Entry(int id, Klass klass, String output, int exitCode) {
+    public Entry(int id, Klass klass, JsonStructure output, int exitCode) {
         this.id = id;
         this.klass = klass;
         this.output = output;
@@ -33,7 +34,7 @@ public class Entry {
         this.klass = klass;
     }
 
-    public void setOutput(String output) {
+    public void setOutput(JsonStructure output) {
         this.output = output;
     }
 
@@ -49,7 +50,7 @@ public class Entry {
         return klass;
     }
 
-    public String getOutput() {
+    public JsonStructure getOutput() {
         return output;
     }
 
