@@ -1,7 +1,6 @@
 package uk.ac.manchester.codeverification.service.elegant.jbmc;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
 
 /**
  * A class to store the registered verification entries.
@@ -10,11 +9,11 @@ public class VerificationEntries {
 
     // the id is utilized as unique index.
     int id;
-    Map<Integer, Entry> entries;
+    private ArrayList<Entry> entries;
 
     public VerificationEntries() {
         this.id = 0;
-        this.entries = new HashMap<>();
+        this.entries = new ArrayList<>();
     }
 
     /**
@@ -22,7 +21,7 @@ public class VerificationEntries {
      */
     public int registerEntry(Entry e) {
         id++;
-        entries.put(id, e);
+        entries.add(e);
         return id;
     }
 
@@ -30,7 +29,7 @@ public class VerificationEntries {
         return entries.get(id);
     }
 
-    public Map<Integer, Entry> getEntries() {
+    public ArrayList<Entry> getEntries() {
         return entries;
     }
 }
