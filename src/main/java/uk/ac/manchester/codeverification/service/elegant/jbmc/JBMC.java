@@ -7,13 +7,12 @@ import java.io.IOException;
 
 public interface JBMC {
 
-    void    setUpJBMCEnvironment()              throws IOException, InterruptedException;
-    void    verifyCode(Klass mainClass)         throws IOException, InterruptedException;
-    JsonStructure  readOutput();
-    String  getEnvironmentVariable(String var);
+    void setUpJBMCEnvironment() throws IOException, InterruptedException;
+    void verifyCode(Klass mainClass) throws IOException, InterruptedException;
+    JsonStructure readOutput();
+    String getEnvironmentVariable(String var);
 
-    int     getExitCode();
-    String  getOutput();
-
-    int     waitFor()                           throws InterruptedException;
+    int getExitCode();
+    String getOutput();
+    int waitFor() throws InterruptedException;
 }

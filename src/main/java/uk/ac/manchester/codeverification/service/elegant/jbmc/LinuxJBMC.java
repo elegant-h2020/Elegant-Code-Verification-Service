@@ -49,7 +49,7 @@ public class LinuxJBMC implements JBMC {
      * @param mainClass is the main class of the program to be verified.
      */
     @Override
-    public void verifyCode(Klass mainClass) throws IOException, InterruptedException {
+    public void verifyCode(Klass mainClass) throws IOException {
         final String program = mainClass.getClassname();
         jbmcProcessBuilder.command(environment.get("JBMC_BIN"), "--json-ui", "--classpath", environment.get("CLASSPATH"), program, "--unwind", "5");
         this.jbmcProcess = jbmcProcessBuilder.start();
@@ -77,15 +77,6 @@ public class LinuxJBMC implements JBMC {
     public String getOutput() {
         return output;
     }
-
-    /*public void iterateOverJsonObjects() {
-        // prints all the json objects in the json array
-        ListIterator l = this.output.deepCopy().asList().listIterator();
-        while (l.hasNext()) {
-            JsonObject j = (JsonObject)l.next();
-            System.out.println("Iteration: " + j);
-        }
-    }*/
 
     @Override
     public int waitFor() throws InterruptedException {

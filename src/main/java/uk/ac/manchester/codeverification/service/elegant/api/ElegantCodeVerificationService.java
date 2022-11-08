@@ -134,7 +134,6 @@ public class ElegantCodeVerificationService {
 
     /**
      * List all known verification entries.
-     * TODO: output field in JSON format ?
      */
     @GET
     @Path("getEntries")

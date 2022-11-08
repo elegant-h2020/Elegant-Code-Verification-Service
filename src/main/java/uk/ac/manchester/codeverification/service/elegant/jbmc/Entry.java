@@ -4,23 +4,18 @@ import jakarta.json.JsonStructure;
 import uk.ac.manchester.codeverification.service.elegant.input.Klass;
 
 public class Entry {
-    /**
-     * The id of a code verification request.
-     */
+
+    // The unique id of a code verification request.
     private long id;
-    private Klass   klass;
-    private JsonStructure  output;
-    private int     exitCode;
+    // The Java class of the code that is verified.
+    private Klass klass;
+    // The code verification tool output (in JSON format).
+    private JsonStructure output;
+    // The exit code of the code verification tool.
+    private int exitCode;
 
     public Entry(Klass klass, JsonStructure output, int exitCode) {
         this.id = -99;
-        this.klass = klass;
-        this.output = output;
-        this.exitCode = exitCode;
-    }
-
-    public Entry(int id, Klass klass, JsonStructure output, int exitCode) {
-        this.id = id;
         this.klass = klass;
         this.output = output;
         this.exitCode = exitCode;

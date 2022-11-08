@@ -11,8 +11,8 @@ import java.util.concurrent.atomic.AtomicLong;
 public class VerificationEntries {
 
     // the id is utilized as unique index.
-    private AtomicLong uid;
-    Map<Long, Entry> entries;
+    private final AtomicLong uid;
+    private Map<Long, Entry> entries;
 
     public VerificationEntries() {
         this.uid = new AtomicLong(-1);
@@ -34,11 +34,7 @@ public class VerificationEntries {
     }
 
     public ArrayList<Entry> listEntries() {
-        ArrayList<Entry> tmp = new ArrayList<>();
-        for (Entry entry: entries.values()) {
-            tmp.add(entry);
-        }
-        return tmp;
+        return new ArrayList<>(entries.values());
     }
 
     public Entry removeEntry(long id) {
