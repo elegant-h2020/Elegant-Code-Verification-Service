@@ -40,4 +40,9 @@ public class VerificationEntries {
         }
         return tmp;
     }
+
+    public Entry removeEntry(long id) {
+        Long key = id;
+        return entries.remove(id);
+    }
 }

@@ -120,9 +120,16 @@ public class ElegantCodeVerificationService {
     @DELETE
     @Path("removeEntry")
     @Produces("text/plain")
-    public String removeEntry(@QueryParam("entryId") String entryId) throws IOException, InterruptedException {
+    public Response removeEntry(@QueryParam("entryId") long entryId) throws IOException, InterruptedException {
         isInitialized();
-        return "removeEntry = " + entryId;
+        Entry deleted = verificationEntries.removeEntry(entryId);
+        Response.Status responseStatus = (deleted != null) ? Response.Status.FOUND : Response.Status.NOT_FOUND;
+        String responseMsg = (deleted != null) ? "Code verification entry (#" + entryId + ") has been deleted.\n" : "Invalid Entry.\n";
+        return Response
+                .status(responseStatus)
+                .type(MediaType.TEXT_PLAIN_TYPE)
+                .entity(responseMsg)
+                .build();
     }
 
     /**
