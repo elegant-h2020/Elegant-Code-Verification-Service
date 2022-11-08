@@ -137,7 +137,7 @@ public class ElegantCodeVerificationService {
         return Response
                 .status(Response.Status.ACCEPTED)
                 .type(MediaType.APPLICATION_JSON_TYPE)
-                .entity(verificationEntries.getEntries())
+                .entity(verificationEntries.listEntries())
                 .build();
     }
 }

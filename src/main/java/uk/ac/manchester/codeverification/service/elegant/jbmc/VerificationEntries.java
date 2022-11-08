@@ -1,6 +1,8 @@
 package uk.ac.manchester.codeverification.service.elegant.jbmc;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -10,11 +12,11 @@ public class VerificationEntries {
 
     // the id is utilized as unique index.
     private AtomicLong uid;
-    private ArrayList<Entry> entries;
+    Map<Long, Entry> entries;
 
     public VerificationEntries() {
         this.uid = new AtomicLong(-1);
-        this.entries = new ArrayList<>();
+        this.entries = new HashMap<>();
     }
 
     /**
@@ -23,15 +25,19 @@ public class VerificationEntries {
     public long registerEntry(Entry e) {
         final long id = uid.incrementAndGet();
         e.setId(id);
-        entries.add(e);
+        entries.put(id, e);
         return id;
     }
 
-    public Entry getEntry(int id) {
+    public Entry getEntry(long id) {
         return entries.get(id);
     }
 
-    public ArrayList<Entry> getEntries() {
-        return entries;
+    public ArrayList<Entry> listEntries() {
+        ArrayList<Entry> tmp = new ArrayList<>();
+        for (Entry entry: entries.values()) {
+            tmp.add(entry);
+        }
+        return tmp;
     }
 }
