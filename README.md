@@ -29,7 +29,15 @@ make -C jbmc/src
 
 ### 2. JDK 8
 
-(TODO): Add instructions. Tested with:  openjdk-8u222-b10, oraclejdk-8u341.
+Install OpenJDK 8u222:
+
+```bash
+wget --no-check-certificate -O /tmp/openjdk-8u222b10.tar.gz https://github.com/AdoptOpenJDK/openjdk8-upstream-binaries/releases/download/jdk8u222-b10/OpenJDK8U-jdk_x64_linux_8u222b10.tar.gz
+tar xzvf /tmp/openjdk-8u222b10.tar.gz --directory /usr/lib/jvm/
+mv /usr/lib/jvm/openjdk-8u222-b10 /usr/lib/jvm/java-8-openjdk-amd64
+```
+
+NOTE: Also tested with Oracle JDK8u341.
 
 ## Installation
 
@@ -56,7 +64,7 @@ cd ~
 wget 'https://www.eclipse.org/downloads/download.php?file=/ee4j/glassfish/glassfish-6.0.0.zip' -O glassfish-6.0.0.zip
 unzip glassfish-6.0.0.zip
 cd glassfish-6.0.0
-echo "AS_JAVA=<path-to-JDK8>" >> ./glassfish/config/asenv.conf
+echo "AS_JAVA=/usr/lib/jvm/openjdk-8u222-b10" >> ./glassfish/config/asenv.conf
 ```
 
 b) Start GlassFish local server:
@@ -94,7 +102,7 @@ curl http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/ve
 c) Remove an entry:
 
 ```bash
-curl http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/removeEntry?entryId=<ID>
+curl --request DELETE http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/removeEntry?entryId=<ID>
 ```
 
 d) List all known verification entries:
