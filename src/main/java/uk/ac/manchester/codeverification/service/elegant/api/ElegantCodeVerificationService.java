@@ -78,7 +78,7 @@ public class ElegantCodeVerificationService {
         // store the result as a new Entry
         String output = jbmc.getVerificationResult();
         int exitCode = jbmc.waitFor();
-        int entryId = verificationEntries.registerEntry(new Entry(klass, output, exitCode));
+        long entryId = verificationEntries.registerEntry(new Entry(klass, output, exitCode));
 
         return Response
                 .status(Response.Status.ACCEPTED)
