@@ -4,7 +4,7 @@ import jakarta.json.JsonStructure;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import uk.ac.manchester.codeverification.service.elegant.input.Klass;
+import uk.ac.manchester.codeverification.service.elegant.input.Code;
 import uk.ac.manchester.codeverification.service.elegant.jbmc.JBMC;
 import uk.ac.manchester.codeverification.service.elegant.jbmc.LinuxJBMC;
 import uk.ac.manchester.codeverification.service.elegant.jbmc.VerificationEntries;
@@ -69,17 +69,17 @@ public class ElegantCodeVerificationService {
     @Path("newEntry")
     @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response submit(Klass klass) throws IOException, InterruptedException {
+    public Response submit(Code code) throws IOException, InterruptedException {
         isInitialized();
 
         // verify
         newJBMCInstance();
-        jbmc.verifyCode(klass);
+        jbmc.verifyCode(code);
 
         // store the result as a new Entry
         JsonStructure output = jbmc.readOutput();
         int exitCode = jbmc.waitFor();
-        long entryId = verificationEntries.registerEntry(new Entry(klass, output, exitCode));
+        long entryId = verificationEntries.registerEntry(new Entry(code, output, exitCode));
 
         return Response
                 .status(Response.Status.ACCEPTED)

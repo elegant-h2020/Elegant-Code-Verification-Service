@@ -1,22 +1,22 @@
 package uk.ac.manchester.codeverification.service.elegant.jbmc;
 
 import jakarta.json.JsonStructure;
-import uk.ac.manchester.codeverification.service.elegant.input.Klass;
+import uk.ac.manchester.codeverification.service.elegant.input.Code;
 
 public class Entry {
 
     // The unique id of a code verification request.
     private long id;
     // The Java class of the code that is verified.
-    private Klass klass;
+    private Code code;
     // The code verification tool output (in JSON format).
     private JsonStructure output;
     // The exit code of the code verification tool.
     private int exitCode;
 
-    public Entry(Klass klass, JsonStructure output, int exitCode) {
+    public Entry(Code code, JsonStructure output, int exitCode) {
         this.id = -99;
-        this.klass = klass;
+        this.code = code;
         this.output = output;
         this.exitCode = exitCode;
     }
@@ -25,8 +25,8 @@ public class Entry {
         this.id = id;
     }
 
-    public void setKlass(Klass klass) {
-        this.klass = klass;
+    public void setCode(Code code) {
+        this.code = code;
     }
 
     public void setOutput(JsonStructure output) {
@@ -41,8 +41,8 @@ public class Entry {
         return id;
     }
 
-    public Klass getKlass() {
-        return klass;
+    public Code getCode() {
+        return code;
     }
 
     public JsonStructure getOutput() {

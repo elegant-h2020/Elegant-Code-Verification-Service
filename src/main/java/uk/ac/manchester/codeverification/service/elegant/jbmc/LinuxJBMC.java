@@ -1,7 +1,7 @@
 package uk.ac.manchester.codeverification.service.elegant.jbmc;
 
 import jakarta.json.*;
-import uk.ac.manchester.codeverification.service.elegant.input.Klass;
+import uk.ac.manchester.codeverification.service.elegant.input.Code;
 
 import java.io.*;
 import java.util.Map;
@@ -46,11 +46,11 @@ public class LinuxJBMC implements JBMC {
 
     /**
      * Starts a Linux JBMC process to verify a Java program.
-     * @param mainClass is the main class of the program to be verified.
+     * @param code is the main class of the program to be verified.
      */
     @Override
-    public void verifyCode(Klass mainClass) throws IOException {
-        final String program = mainClass.getClassname();
+    public void verifyCode(Code code) throws IOException {
+        final String program = code.getClassname();
         jbmcProcessBuilder.command(environment.get("JBMC_BIN"), "--json-ui", "--classpath", environment.get("CLASSPATH"), program, "--unwind", "5");
         this.jbmcProcess = jbmcProcessBuilder.start();
     }
