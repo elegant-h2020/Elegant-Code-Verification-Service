@@ -4,6 +4,7 @@ import jakarta.json.*;
 import uk.ac.manchester.codeverification.service.elegant.input.Code;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Map;
 
 public class LinuxJBMC implements JBMC {
@@ -50,14 +51,32 @@ public class LinuxJBMC implements JBMC {
         environment.put("OUTPUT", environment.get("SERVICE_DIR") + "/output");
     }
 
+    public String[] commandArgs(Code code) {
+        ArrayList<String> args = new ArrayList<>();
+        args.add(environment.get("JBMC_BIN"));
+        args.add("--json-ui");
+        args.add("--classpath");
+        args.add(environment.get("CLASSPATH"));
+        if (code.isMethod()) {
+            final String method = code.getMethodName();
+            args.add("--function");
+            args.add(method);
+        }
+        final String klass = code.getClassName();
+        args.add(klass);
+        args.add("--unwind");
+        args.add("5");
+        String[] strArray = new String[args.size()];
+        return args.toArray(strArray);
+    }
+
     /**
      * Starts a Linux JBMC process to verify a Java program.
      * @param code is the main class of the program to be verified.
      */
     @Override
     public void verifyCode(Code code) throws IOException {
-        final String program = code.getClassname();
-        jbmcProcessBuilder.command(environment.get("JBMC_BIN"), "--json-ui", "--classpath", environment.get("CLASSPATH"), program, "--unwind", "5");
+        jbmcProcessBuilder.command(commandArgs(code));
         this.jbmcProcess = jbmcProcessBuilder.start();
     }
 
