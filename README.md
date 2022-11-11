@@ -13,19 +13,59 @@ Code Verification Webservice.
 
 ### 1. CBMC
 
-```bash
-sudo apt-get install g++ gcc flex bison make git curl patch maven jq
-mkdir ~/Elegant
-git clone git@github.com:elegant-h2020/cbmc.git Elegant/CBMC
-cd ~/Elegant/CBMC
-git checkout cbmc-5.58.1
+1. Install the pre-required packages of CBMC:
 
-make -C src minisat2-download
-make -C src
+	```bash
+	sudo apt-get install g++ gcc flex bison make git curl patch maven jq
+	```
 
-make -C jbmc/src setup-submodules
-make -C jbmc/src
-```
+2. Clone the code:
+	```bash
+	mkdir ~/Elegant
+	git clone git@github.com:elegant-h2020/cbmc.git ~/Elegant/CBMC
+	cd ~/Elegant/CBMC
+	git checkout cbmc-5.58.1
+	```
+
+3. Build the tool (CMake is suggested):
+
+	- Build with CMake:
+
+		1. Install CMake v3.2:
+		
+			```bash
+			cd ~
+			sudo apt remove cmake
+			sudo apt purge --auto-remove cmake
+			sudo apt-get install build-essential
+			wget https://cmake.org/files/v3.2/cmake-3.2.0.tar.gz
+			tar xf cmake-3.2.0.tar.gz
+			cd cmake-3.2.0/
+			./configure
+			make
+			sudo make install
+			```
+
+		2. Build CBMC:
+			```bash
+			cd ~/Elegant/CBMC
+			git submodule update --init
+			cmake -S . -Bbuild
+			mkdir -p build/minisat2-download/minisat2-download-prefix/src/
+			wget http://ftp.debian.org/debian/pool/main/m/minisat2/minisat2_2.2.1.orig.tar.gz -O build/minisat2-download/minisat2-download-prefix/src/minisat2_2.2.1.orig.tar.gz
+			cmake --build build
+			```
+
+	-  Build with Make:
+
+		```bash
+		cd ~/Elegant/CBMC
+		make -C src minisat2-download
+		make -C src
+
+		make -C jbmc/src setup-submodules
+		make -C jbmc/src
+		```
 
 ### 2. JDK 8
 
@@ -48,70 +88,104 @@ cd ~/Elegant
 git clone git@github.com:elegant-h2020/Elegant-Code-Verification-Service.git
 ```
 
-### 2. Build the service:
+### 2. Configure the project:
+
+Make sure that `JBMC_BIN` is properly set in `LinuxJBMC.setUpJBMCEnvironment()`in order to let the web service to utilize the JBMC tool:
+
+- CBMC built with CMake:
+	- ```environment.put("JBMC_BIN", environment.get("WORKDIR") + "/build/bin/jbmc");```
+- CBMC built with Make:
+	- ```environment.put("JBMC_BIN", environment.get("WORKDIR") + "/jbmc/src/jbmc/jbmc");```
+
+### 3. Build the service:
 
 ```bash
 cd ~/Elegant/Elegant-Code-Verification-Service
 mvn clean install
 ```
 
-### 3. Deploy a GlassFish server
+### 4. Deploy a GlassFish server
 
-a) Download GlassFish 6.0.0:
+1. Download GlassFish 6.0.0:
 
-```bash
-cd ~
-wget 'https://www.eclipse.org/downloads/download.php?file=/ee4j/glassfish/glassfish-6.0.0.zip' -O glassfish-6.0.0.zip
-unzip glassfish-6.0.0.zip
-cd glassfish-6.0.0
-echo "AS_JAVA=/usr/lib/jvm/openjdk-8u222-b10" >> ./glassfish/config/asenv.conf
-```
+	```bash
+	cd ~
+	wget 'https://www.eclipse.org/downloads/download.php?file=/ee4j/glassfish/glassfish-6.0.0.zip' -O glassfish-6.0.0.zip
+	unzip glassfish-6.0.0.zip
+	cd glassfish-6.0.0
+	echo "AS_JAVA=/usr/lib/jvm/openjdk-8u222-b10" >> ./glassfish/config/asenv.conf
+	```
 
-b) Start GlassFish local server:
+2. Start GlassFish local server:
 
-```bash
-./bin/asadmin start-domain domain1
-```
+	```bash
+	./bin/asadmin start-domain domain1
+	```
 
-### 4. Utilize the API:
+### 5. Utilize the API
 
-a) Start and initialize the service
+1. Start and initialize the service
 
-```bash
-curl http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification
-```
+	```bash
+	curl http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification
+	```
 
-b) Register a new entry for verification:
+2. Register a new entry for verification:
 
-```bash
-curl --header "Content-Type: application/json" --request POST  --data '{"classname":"<path.to.main>"}' http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newEntry
-````
+	###### The JSON input data format:	The JSON input data format:
+	```bash
+	{
+		"className": "path.to.main",
+		"isMethod": true | false
+		"methodName": "fully.qualified.name:(arg types)return type"
+	}
+	```
 
-e.g.: to verify the example code (`test-cases/my/petty/examples/Simple.java`)
+	###### Using the `curl`:
 
-```bash
-curl --header "Content-Type: application/json" --request POST  --data '{"classname":"my.petty.examples.Simple"}' http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newEntry
-```
+	```bash
+	curl --header "Content-Type: application/json" --request POST  --data '{"className": "<path.to.main>", "isMethod": true | false, "methodName": "fully.qualified.name:(arg types)return type"}' http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newEntry
+	```
 
-c) Get the verification outcome of an entry:
+	###### Examples:
+	
+	1. Verify the whole class (`test-cases/my/petty/examples/Simple.java`) :
+	
+	```bash
+	curl --header "Content-Type: application/json" --request POST  --data '{"className": "my.petty.examples.Simple"}' http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newEntry
+	```
+	
+	2. Verify the `void foo()` method:
+	
+	```bash
+	curl --header "Content-Type: application/json" --request POST  --data '{"className":"my.petty.examples.Simple", "isMethod":true, "methodName":"my.petty.examples.Simple.foo:()V"}'  http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newEntry
+	```
+	
+	3. Verify the `boolean foo(String)` method:
+	
+	```bash
+	curl --header "Content-Type: application/json" --request POST  --data '{"className":"my.petty.examples.Simple", "isMethod":true, "methodName":"my.petty.examples.Simple.foo:(Ljava/lang/String;)Z"}'  http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newEntry
+	```
 
-```bash
-curl http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/getEntry?entryId=<ID>
-```
+3. Get the verification outcome of an entry:
 
-c) Remove an entry:
+	```bash
+	curl http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/getEntry?entryId=<ID>
+	```
 
-```bash
-curl --request DELETE http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/removeEntry?entryId=<ID>
-```
+4. Remove an entry:
 
-d) List all known verification entries:
+	```bash
+	curl --request DELETE http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/removeEntry?entryId=<ID>
+	```
+
+5. List all known verification entries:
 
 ```bash
 curl http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/getEntries
 ```
 
-### 3. Stop the GlassFish server
+### 6. Stop the GlassFish server
 
 ```bash
 ./bin/asadmin stop-domain domain1
