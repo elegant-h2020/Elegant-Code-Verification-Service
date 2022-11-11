@@ -28,6 +28,12 @@ public class LinuxJBMC implements JBMC {
         jbmcProcessBuilder.directory(new File(environment.get("WORKDIR")));
     }
 
+    /**
+     * If CBMC is built with CMake:
+     *  JBMC_BIN = WORKDIR/build/bin/jbmc
+     * If CBMC is built with Make:
+     *  JBMC_BIN = WORKDIR/jbmc/src/jbmc/jbmc
+     */
     @Override
     public void setUpJBMCEnvironment() {
 
@@ -35,7 +41,7 @@ public class LinuxJBMC implements JBMC {
 
         environment.put("PATH_TO_JBMC", "/Elegant/CBMC");
         environment.put("WORKDIR", System.getProperty("user.home") + environment.get("PATH_TO_JBMC"));
-        environment.put("JBMC_BIN", environment.get("WORKDIR") + "/jbmc/src/jbmc/jbmc");
+        environment.put("JBMC_BIN", environment.get("WORKDIR") + "/build/bin/jbmc");
         environment.put("JAVA_MODEL", environment.get("WORKDIR") + "/jbmc/lib/java-models-library/target/core-models.jar");
         environment.put("SERVICE_DIR", System.getProperty("user.home") + "/Elegant/Elegant-Code-Verification-Service");
         //String testCasesPath = System.getProperty("user.home") + "/Elegant/Elegant-Code-Verification-Service/test-cases";
