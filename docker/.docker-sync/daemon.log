@@ -1,0 +1,6 @@
+     command  docker volume create --opt type=none --opt device="/home/orion/Elegant/Elegant-Code-Verification-Service/" --opt o=bind --name code-verification-service-src-sync
+     success  Docker volume for code-verification-service-src-sync created
+     success  Watcher disabled by configuration
+     command  docker volume create --opt type=none --opt device="/home/orion/Elegant/CBMC/" --opt o=bind --name cbmc-src-sync
+     success  Docker volume for cbmc-src-sync created
+     success  Watcher disabled by configuration
