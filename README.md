@@ -79,6 +79,16 @@ mv /usr/lib/jvm/openjdk-8u222-b10 /usr/lib/jvm/java-8-openjdk-amd64
 
 NOTE: Also tested with Oracle JDK8u341.
 
+### 3. Glassfish 6.0.0
+
+```bash
+cd ~
+wget 'https://www.eclipse.org/downloads/download.php?file=/ee4j/glassfish/glassfish-6.0.0.zip' -O glassfish-6.0.0.zip
+unzip glassfish-6.0.0.zip
+cd ~/glassfish6
+echo "AS_JAVA=/usr/lib/jvm/openjdk-8u222-b10" >> ./glassfish/config/asenv.conf
+```
+
 ## Installation
 
 ### 1. Clone the project:
@@ -88,7 +98,13 @@ cd ~/Elegant
 git clone git@github.com:elegant-h2020/Elegant-Code-Verification-Service.git
 ```
 
-### 2. Configure the project:
+### 2. Environment variables:
+```bash
+export JAVA_HOME=/usr/lib/jvm/openjdk-8u222-b10
+export GLASSFISH_HOME=~/glassfish6/glassfish/bin
+```
+
+### 3. Configure the project:
 
 Make sure that `JBMC_BIN` is properly set in `LinuxJBMC.setUpJBMCEnvironment()`in order to let the web service to utilize the JBMC tool:
 
@@ -104,25 +120,25 @@ cd ~/Elegant/Elegant-Code-Verification-Service
 mvn clean install
 ```
 
-### 4. Deploy a GlassFish server
+### 4. Set a GlassFish server up:
 
-1. Download GlassFish 6.0.0:
+```bash
+$GLASSFISH_HOME/asadmin start-domain domain1
+```
 
-	```bash
-	cd ~
-	wget 'https://www.eclipse.org/downloads/download.php?file=/ee4j/glassfish/glassfish-6.0.0.zip' -O glassfish-6.0.0.zip
-	unzip glassfish-6.0.0.zip
-	cd glassfish-6.0.0
-	echo "AS_JAVA=/usr/lib/jvm/openjdk-8u222-b10" >> ./glassfish/config/asenv.conf
-	```
-
-2. Start GlassFish local server:
+- To stop a GlassFish local server:
 
 	```bash
-	./bin/asadmin start-domain domain1
+	GLASSFISH_HOME/asadmin stop-domain domain1
 	```
 
-### 5. Utilize the API
+### 5. Deploy the service:
+
+```bash
+$GLASSFISH_HOME/asadmin deploy <path/to/war>
+```
+
+### 6. Utilize the API
 
 1. Start and initialize the service
 
@@ -183,12 +199,6 @@ mvn clean install
 
 ```bash
 curl http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/getEntries
-```
-
-### 6. Stop the GlassFish server
-
-```bash
-./bin/asadmin stop-domain domain1
 ```
 
 ## Licenses
