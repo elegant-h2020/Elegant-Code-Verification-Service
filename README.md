@@ -9,7 +9,88 @@ This project aims to build a RESTful API in Java that can submit requests for ..
 The project uses Jakarta EE 9 and Eclipse GlassFish 6 to implement a portable API for the development, exposure, and accessing of the ELEGANT
 Code Verification Webservice.
 
+## Dependencies
+
+- CBMC v5.58.1
+- ESBMC v....
+
+## Getting the source code
+
+The service expects the source code to be in the following tree:
+
+```
+Elegant
+├── Elegant-Code-Verification-Service
+├── CBMC
+├── ESBMC_Project
+```
+
+To get the source code in this layout execute:
+
+```bash
+mkdir ~/Elegant
+git clone git@github.com:elegant-h2020/cbmc.git ~/Elegant/CBMC
+git clone git@github.com:elegant-h2020/esbmc.git ~/Elegant/ESBMC_Project/esbmc
+git clone git@github.com:elegant-h2020/Elegant-Code-Verification-Service.git ~/Elegant/Elegant-Code-Verification-Service
+```
+
+Checkout to specific versions of the tools:
+
+- CBMC
+
+	```bash
+	cd ~/Elegant/CBMC
+	git checkout cbmc-5.58.1
+	```
+
+- ESBMC
+
+	```bash
+	cd ~/Elegant/ESBMC_Project/esbmc
+	git checkout ...
+	```
+
+
 ## Requirements
+
+### 1. JDK 8
+
+Install OpenJDK 8u222:
+
+```bash
+wget --no-check-certificate -O /tmp/openjdk-8u222b10.tar.gz https://github.com/AdoptOpenJDK/openjdk8-upstream-binaries/releases/download/jdk8u222-b10/OpenJDK8U-jdk_x64_linux_8u222b10.tar.gz
+tar xzvf /tmp/openjdk-8u222b10.tar.gz --directory /usr/lib/jvm/
+mv /usr/lib/jvm/openjdk-8u222-b10 /usr/lib/jvm/java-8-openjdk-amd64
+```
+
+NOTE: Also tested with Oracle JDK8u341.
+
+### 2. Glassfish 6.0.0
+
+```bash
+cd ~
+wget 'https://www.eclipse.org/downloads/download.php?file=/ee4j/glassfish/glassfish-6.0.0.zip' -O glassfish-6.0.0.zip
+unzip glassfish-6.0.0.zip
+cd ~/glassfish6
+echo "AS_JAVA=/usr/lib/jvm/openjdk-8u222-b10" >> ./glassfish/config/asenv.conf
+```
+
+### 3. CMake v3.8:
+
+```bash
+cd ~
+sudo apt remove cmake
+sudo apt purge --auto-remove cmake
+sudo apt-get install build-essential
+wget https://cmake.org/files/v3.8/cmake-3.8.0.tar.gz
+tar xf cmake-3.8.0.tar.gz
+cd cmake-3.8.0/
+./configure
+make
+sudo make install
+```
+
+## Build and Install the Code Verification tools:
 
 ### 1. CBMC
 
@@ -19,42 +100,17 @@ Code Verification Webservice.
 	sudo apt-get install g++ gcc flex bison make git curl patch maven jq
 	```
 
-2. Clone the code:
-	```bash
-	mkdir ~/Elegant
-	git clone git@github.com:elegant-h2020/cbmc.git ~/Elegant/CBMC
-	cd ~/Elegant/CBMC
-	git checkout cbmc-5.58.1
-	```
-
-3. Build the tool (CMake is suggested):
+2. Build the tool (CMake is suggested):
 
 	- Build with CMake:
-
-		1. Install CMake v3.2:
-		
-			```bash
-			cd ~
-			sudo apt remove cmake
-			sudo apt purge --auto-remove cmake
-			sudo apt-get install build-essential
-			wget https://cmake.org/files/v3.2/cmake-3.2.0.tar.gz
-			tar xf cmake-3.2.0.tar.gz
-			cd cmake-3.2.0/
-			./configure
-			make
-			sudo make install
-			```
-
-		2. Build CBMC:
-			```bash
-			cd ~/Elegant/CBMC
-			git submodule update --init
-			cmake -S . -Bbuild
-			mkdir -p build/minisat2-download/minisat2-download-prefix/src/
-			wget http://ftp.debian.org/debian/pool/main/m/minisat2/minisat2_2.2.1.orig.tar.gz -O build/minisat2-download/minisat2-download-prefix/src/minisat2_2.2.1.orig.tar.gz
-			cmake --build build
-			```
+		```bash
+		cd ~/Elegant/CBMC
+		git submodule update --init
+		cmake -S . -Bbuild
+		mkdir -p build/minisat2-download/minisat2-download-prefix/src/
+		wget http://ftp.debian.org/debian/pool/main/m/minisat2/minisat2_2.2.1.orig.tar.gz -O build/minisat2-download/minisat2-download-prefix/src/minisat2_2.2.1.orig.tar.gz
+		cmake --build build
+		```
 
 	-  Build with Make:
 
@@ -67,44 +123,20 @@ Code Verification Webservice.
 		make -C jbmc/src
 		```
 
-### 2. JDK 8
+### 2. ESBMC
 
-Install OpenJDK 8u222:
+...
 
+## Service Installation
+
+### 1. Set Environment variables:
 ```bash
-wget --no-check-certificate -O /tmp/openjdk-8u222b10.tar.gz https://github.com/AdoptOpenJDK/openjdk8-upstream-binaries/releases/download/jdk8u222-b10/OpenJDK8U-jdk_x64_linux_8u222b10.tar.gz
-tar xzvf /tmp/openjdk-8u222b10.tar.gz --directory /usr/lib/jvm/
-mv /usr/lib/jvm/openjdk-8u222-b10 /usr/lib/jvm/java-8-openjdk-amd64
-```
-
-NOTE: Also tested with Oracle JDK8u341.
-
-### 3. Glassfish 6.0.0
-
-```bash
-cd ~
-wget 'https://www.eclipse.org/downloads/download.php?file=/ee4j/glassfish/glassfish-6.0.0.zip' -O glassfish-6.0.0.zip
-unzip glassfish-6.0.0.zip
-cd ~/glassfish6
-echo "AS_JAVA=/usr/lib/jvm/openjdk-8u222-b10" >> ./glassfish/config/asenv.conf
-```
-
-## Installation
-
-### 1. Clone the project:
-
-```bash 
-cd ~/Elegant
-git clone git@github.com:elegant-h2020/Elegant-Code-Verification-Service.git
-```
-
-### 2. Environment variables:
-```bash
+export SERVICE_HOME=~/Elegant/Elegant-Code-Verification-Service
 export JAVA_HOME=/usr/lib/jvm/openjdk-8u222-b10
 export GLASSFISH_HOME=~/glassfish6/glassfish/bin
 ```
 
-### 3. Configure the project:
+### 2. Configure the project:
 
 Make sure that `JBMC_BIN` is properly set in `LinuxJBMC.setUpJBMCEnvironment()`in order to let the web service to utilize the JBMC tool:
 
@@ -120,13 +152,13 @@ cd ~/Elegant/Elegant-Code-Verification-Service
 mvn clean install
 ```
 
-### 4. Set a GlassFish server up:
+### 4. Set a GlassFish domain up:
 
 ```bash
 $GLASSFISH_HOME/asadmin start-domain domain1
 ```
 
-- To stop a GlassFish local server:
+- To stop a GlassFish domain:
 
 	```bash
 	GLASSFISH_HOME/asadmin stop-domain domain1
@@ -134,9 +166,14 @@ $GLASSFISH_HOME/asadmin start-domain domain1
 
 ### 5. Deploy the service:
 
-```bash
-$GLASSFISH_HOME/asadmin deploy <path/to/war>
-```
+	```bash
+	$GLASSFISH_HOME/asadmin deploy <path/to/service/war>
+	```
+
+- for our service:
+	```bash
+	$GLASSFISH_HOME/asadmin deploy $SERVICE_HOME/target/Elegant-Code-Verification-Service-1.0-SNAPSHOT.war
+	```
 
 ### 6. Utilize the API
 
