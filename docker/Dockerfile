@@ -61,7 +61,15 @@ RUN git submodule update --init \
     && cmake --build build
 
 # build ESBMC
-#WORKDIR
+WORKDIR /root/Elegant/ESBMC_Project
+RUN cd esbmc \
+    && mkdir build \
+    && cd build \
+    && cmake .. -GNinja -DBUILD_TESTING=On -DENABLE_REGRESSION=On -DClang_DIR=$PWD/../../clang11 -DLLVM_DIR=$PWD/../../clang11 -DBUILD_STATIC=On -DBoolector_DIR=$PWD/../../boolector-release -DCMAKE_INSTALL_PREFIX:PATH=$PWD/../../release
+
+WORKDIR /root/Elegant/ESBMC_Project/esbmc/build
+
+RUN cmake --build . && ninja install
 
 # define paths
 ENV SERVICE_HOME=/root/Elegant/Elegant-Code-Verification-Service
