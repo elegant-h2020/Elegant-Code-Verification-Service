@@ -16,3 +16,7 @@ artifacts/
 
 ### Mac OS ###
 .DS_Store
+
+
+### Docker ###
+docker/.docker-sync/*
