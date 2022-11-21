@@ -6,5 +6,3 @@ syncs:
   code-verification-service-src-sync: # tip: add -sync, and you keep consistent names as a convention
     src: '../'
     sync_excludes: ['target/*', '*.war', '*.class']
-  cbmc-src-sync:
-    src: '../../CBMC/'

@@ -14,12 +14,9 @@ services:
       - "8080:8080"
     volumes:
       - code-verification-service-src-sync:/root/Elegant/Elegant-Code-Verification-Service:nocopy # nocopy is important
-      - cbmc-src-sync:/root/Elegant/CBMC:nocopy
       - /tmp/.X11-unix:/tmp/.X11-unix
 
 # that the important thing
 volumes:
   code-verification-service-src-sync:
-    external: true
-  cbmc-src-sync:
     external: true
