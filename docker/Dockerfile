@@ -18,12 +18,12 @@ RUN wget --no-check-certificate 'https://www.eclipse.org/downloads/download.php?
     && unzip glassfish-6.0.0.zip
 RUN echo "AS_JAVA=/usr/lib/jvm/openjdk-8u222-b10" >> glassfish6/glassfish/config/asenv.conf
 
-# install CMake v3.8
+# install CMake v3.14
 RUN pwd
 RUN apt remove cmake && apt purge --auto-remove cmake \
-    && wget https://cmake.org/files/v3.8/cmake-3.8.0.tar.gz \
-    && tar xf cmake-3.8.0.tar.gz
-WORKDIR /cmake-3.8.0/
+    && wget https://cmake.org/files/v3.14/cmake-3.14.0.tar.gz \
+    && tar xf cmake-3.14.0.tar.gz
+WORKDIR /cmake-3.14.0/
 RUN ./configure && make && make install
 
 RUN cmake --version
