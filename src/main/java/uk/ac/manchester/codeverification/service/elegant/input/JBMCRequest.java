@@ -1,22 +1,30 @@
 package uk.ac.manchester.codeverification.service.elegant.input;
 
 /**
- * This class holds the metadata of the input code.
+ * This class represents a code verification request with the JBMC tool.
+ *
  */
-public class Code {
+public class JBMCRequest implements Request{
 
+    private String tool;
     private String className;
     private boolean isMethod;
     // Fully qualified name of a method.
     private String methodName;
 
-    public Code() {
-    }
-
-    public Code(String name, boolean isMethod, String methodName) {
-        this.className = name;
+    /*public JBMCRequest(String tool, String className, boolean isMethod, String methodName) {
+        this.tool = tool;
+        this.className = className;
         this.isMethod = isMethod;
         this.methodName = methodName;
+    }*/
+
+    public static JBMCRequest asJBMCRequest(Request request) {
+        return (JBMCRequest) request;
+    }
+
+    public String getTool() {
+        return tool;
     }
 
     public String getClassName() {
@@ -29,6 +37,10 @@ public class Code {
 
     public String getMethodName() {
         return methodName;
+    }
+
+    public void setTool(String tool) {
+        this.tool = tool;
     }
 
     public void setClassName(String classname) {
@@ -45,10 +57,11 @@ public class Code {
 
     @Override
     public String toString() {
-        return "Code{" +
-                "classname=\""      + className     + "\"" +
-                ", isMethod="       + isMethod      +
-                ", methodName=\""   + methodName    + "\"" +
+        return "Request{" +
+                "tool = \""           + tool          + "\"" +
+                ", className = \""    + className     + "\"" +
+                ", isMethod = "       + isMethod      +
+                ", methodName = \""   + methodName    + "\"" +
                 "}";
     }
 }

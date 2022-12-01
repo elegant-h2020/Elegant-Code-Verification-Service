@@ -4,11 +4,13 @@ import jakarta.json.JsonStructure;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import uk.ac.manchester.codeverification.service.elegant.input.Code;
-import uk.ac.manchester.codeverification.service.elegant.jbmc.JBMC;
-import uk.ac.manchester.codeverification.service.elegant.jbmc.LinuxJBMC;
-import uk.ac.manchester.codeverification.service.elegant.jbmc.VerificationEntries;
-import uk.ac.manchester.codeverification.service.elegant.jbmc.Entry;
+import uk.ac.manchester.codeverification.service.elegant.input.ESBMCRequest;
+import uk.ac.manchester.codeverification.service.elegant.input.JBMCRequest;
+import uk.ac.manchester.codeverification.service.elegant.input.Request;
+import uk.ac.manchester.codeverification.service.elegant.output.Entry;
+import uk.ac.manchester.codeverification.service.elegant.output.VerificationEntries;
+import uk.ac.manchester.codeverification.service.elegant.output.VerificationResult;
+import uk.ac.manchester.codeverification.service.elegant.tool.*;
 
 import java.io.*;
 
@@ -16,7 +18,7 @@ import java.io.*;
 public class ElegantCodeVerificationService {
 
     private static final String OS;
-    private static JBMC jbmc;
+    private static VerificationTool verificationTool;
     private static VerificationEntries verificationEntries;
     private static boolean isInitialized = false;
 
@@ -54,32 +56,53 @@ public class ElegantCodeVerificationService {
         }
     }
 
-    private void newJBMCInstance() {
+    private void newToolInstance(String tool) {
         if (OS.startsWith("linux")) {
-            jbmc = new LinuxJBMC();
+            if (tool.equals("JBMC")) {
+                verificationTool = new LinuxJBMC();
+            } else if (tool.equals("ESBMC")) {
+                verificationTool = new LinuxESBMC();
+            } else {
+                throw new UnsupportedOperationException("Code verification tool " + tool + " is currently not supported.");
+            }
         } else {
             throw new UnsupportedOperationException("Code verification Service is currently not supported for " + OS + ".");
         }
     }
 
-    /**
-     * Register a new entry for verification.
-     */
     @POST
-    @Path("newEntry")
+    @Path("newJBMCEntry")
     @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response submit(Code code) throws IOException, InterruptedException {
+    public Response submit(JBMCRequest request) throws IOException, InterruptedException {
         isInitialized();
+        newToolInstance("JBMC");
+        request.setTool("JBMC");
+        return verifyAndStore(request);
+    }
 
+    @POST
+    @Path("newESBMCEntry")
+    @Produces(MediaType.TEXT_PLAIN)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response submit(ESBMCRequest request) throws IOException, InterruptedException {
+        isInitialized();
+        newToolInstance("ESBMC");
+        request.setTool("ESBMC");
+        return verifyAndStore(request);
+    }
+
+    public Response verifyAndStore(Request request) throws IOException, InterruptedException {
         // verify
-        newJBMCInstance();
-        jbmc.verifyCode(code);
+        verificationTool.verifyCode(request);
+
+        // store the output and exit code as a new VerificationResult
+        JsonStructure output = verificationTool.readOutput();
+        int exitCode = verificationTool.waitFor();
+        VerificationResult result = new VerificationResult(output, exitCode);
 
         // store the result as a new Entry
-        JsonStructure output = jbmc.readOutput();
-        int exitCode = jbmc.waitFor();
-        long entryId = verificationEntries.registerEntry(new Entry(code, output, exitCode));
+        long entryId = verificationEntries.registerEntry(new Entry(request, result));
 
         return Response
                 .status(Response.Status.ACCEPTED)
@@ -87,6 +110,7 @@ public class ElegantCodeVerificationService {
                 .entity("New code verification request has been registered (#" + entryId + ")\n")
                 .build();
     }
+
 
     /**
      * Get the verification outcome of an entry.
@@ -102,7 +126,7 @@ public class ElegantCodeVerificationService {
         if (e != null) {
             return Response
                     .status(Response.Status.OK)
-                    .entity(e.getOutput())
+                    .entity(e)
                     .type(MediaType.APPLICATION_JSON)
                     .build();
         } else {

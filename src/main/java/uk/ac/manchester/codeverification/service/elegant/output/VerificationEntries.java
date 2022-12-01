@@ -1,4 +1,4 @@
-package uk.ac.manchester.codeverification.service.elegant.jbmc;
+package uk.ac.manchester.codeverification.service.elegant.output;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * A class to store the registered verification entries.
+ * A class to store the registered verification {@link Entry}s.
  */
 public class VerificationEntries {
 

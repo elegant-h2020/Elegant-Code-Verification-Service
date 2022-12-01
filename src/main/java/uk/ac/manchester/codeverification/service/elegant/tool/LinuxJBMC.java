@@ -1,13 +1,16 @@
-package uk.ac.manchester.codeverification.service.elegant.jbmc;
+package uk.ac.manchester.codeverification.service.elegant.tool;
 
 import jakarta.json.*;
-import uk.ac.manchester.codeverification.service.elegant.input.Code;
+import uk.ac.manchester.codeverification.service.elegant.input.JBMCRequest;
+import uk.ac.manchester.codeverification.service.elegant.input.Request;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class LinuxJBMC implements JBMC {
+import static uk.ac.manchester.codeverification.service.elegant.input.JBMCRequest.asJBMCRequest;
+
+public class LinuxJBMC implements VerificationTool {
 
     ProcessBuilder      jbmcProcessBuilder;
     Map<String, String> environment;
@@ -25,18 +28,18 @@ public class LinuxJBMC implements JBMC {
     public LinuxJBMC() {
         super();
         this.jbmcProcessBuilder = new ProcessBuilder();
-        setUpJBMCEnvironment();
+        setUpToolEnvironment();
         jbmcProcessBuilder.directory(new File(environment.get("WORKDIR")));
     }
 
     /**
-     * If CBMC is built with CMake:
+     * If CBMC has been built with CMake:
      *  JBMC_BIN = WORKDIR/build/bin/jbmc
-     * If CBMC is built with Make:
+     * If CBMC has been built with Make:
      *  JBMC_BIN = WORKDIR/jbmc/src/jbmc/jbmc
      */
     @Override
-    public void setUpJBMCEnvironment() {
+    public void setUpToolEnvironment() {
 
         environment = jbmcProcessBuilder.environment();
 
@@ -51,7 +54,7 @@ public class LinuxJBMC implements JBMC {
         environment.put("OUTPUT", environment.get("SERVICE_DIR") + "/output");
     }
 
-    public String[] commandArgs(Code code) {
+    public String[] commandArgs(JBMCRequest code) {
         ArrayList<String> args = new ArrayList<>();
         args.add(environment.get("JBMC_BIN"));
         args.add("--json-ui");
@@ -75,8 +78,8 @@ public class LinuxJBMC implements JBMC {
      * @param code is the main class of the program to be verified.
      */
     @Override
-    public void verifyCode(Code code) throws IOException {
-        jbmcProcessBuilder.command(commandArgs(code));
+    public void verifyCode(Request code) throws IOException {
+        jbmcProcessBuilder.command(commandArgs(asJBMCRequest(code)));
         this.jbmcProcess = jbmcProcessBuilder.start();
     }
 
