@@ -29,8 +29,8 @@ To get the source code in this layout execute:
 
 ```bash
 mkdir ~/Elegant
-git clone git@github.com:elegant-h2020/cbmc.git ~/Elegant/CBMC
-git clone git@github.com:elegant-h2020/esbmc.git ~/Elegant/ESBMC_Project/esbmc
+git clone https://github.com/diffblue/cbmc.git ~/Elegant/CBMC
+git clone https://github.com/esbmc/esbmc.git ~/Elegant/ESBMC_Project/esbmc
 git clone git@github.com:elegant-h2020/Elegant-Code-Verification-Service.git ~/Elegant/Elegant-Code-Verification-Service
 ```
 
@@ -47,7 +47,7 @@ Checkout to specific versions of the tools:
 
 	```bash
 	cd ~/Elegant/ESBMC_Project/esbmc
-	git checkout ...
+	git checkout v7.0
 	```
 
 
@@ -94,13 +94,13 @@ sudo make install
 
 ### 1. CBMC
 
-1. Install the pre-required packages of CBMC:
+1. Install the pre-required packages for CBMC:
 
 	```bash
 	sudo apt-get install g++ gcc flex bison make git curl patch maven jq
 	```
 
-2. Build the tool (CMake is suggested):
+2. Build the CBMC tool (CMake is suggested):
 
 	- Build with CMake:
 		```bash
@@ -125,7 +125,30 @@ sudo make install
 
 ### 2. ESBMC
 
-...
+1. Install the pre-required packages and solvers (Boolector only) for ESBMC:
+
+	```bash
+	sudo apt-get install clang-tidy python-is-python3 csmith python3 ccache libcsmith-dev gperf libgmp-dev gcc-multilib linux-libc-dev libboost-all-dev ninja-build python3-setuptools libtinfo-dev pkg-config python3-pip && pip install toml
+	cd ~/Elegant/ESBMC_Project
+	
+	# Boolector 3.2.2
+	git clone --depth=1 --branch=3.2.2 https://github.com/boolector/boolector && cd boolector && ./contrib/setup-lingeling.sh && ./contrib/setup-btor2tools.sh && ./configure.sh --prefix $PWD/../boolector-release && cd build && make -j4 && make install
+	
+	# Download clang11
+	RUN wget https://github.com/llvm/llvm-project/releases/download/llvmorg-11.0.0/clang+llvm-11.0.0-x86_64-linux-gnu-ubuntu-20.04.tar.xz  && tar xf clang+llvm-11.0.0-x86_64-linux-gnu-ubuntu-20.04.tar.xz && mv clang+llvm-11.0.0-x86_64-linux-gnu-ubuntu-20.04 clang11 && rm clang+llvm-11.0.0-x86_64-linux-gnu-ubuntu-20.04.tar.xz
+	# Setup ibex 2.8.9
+	wget http://www.ibex-lib.org/ibex-2.8.9.tgz && tar xvfz ibex-2.8.9.tgz && cd ibex-2.8.9 && ./waf configure --lp-lib=soplex && ./waf install
+	```
+
+2. Build the ESBMC tool:
+
+	```bash
+	cd ~/Elegant/ESBMC_Project/esbmc
+	mkdir build
+	cd build
+	cmake .. -GNinja -DBUILD_TESTING=On -DENABLE_REGRESSION=On -DClang_DIR=$PWD/../../clang11 -DLLVM_DIR=$PWD/../../clang11 -DBUILD_STATIC=On -DBoolector_DIR=$PWD/../../boolector-release -DCMAKE_INSTALL_PREFIX:PATH=$PWD/../../release
+	cmake --build . && ninja install
+	```
 
 ## Service Installation
 
@@ -147,6 +170,7 @@ Make sure that `JBMC_BIN` is properly set in `LinuxJBMC.setUpJBMCEnvironment()`i
 
 ### 3. Build the service:
 
+Generates the war file in `~/Elegant/Elegant-Code-Verification-Service/target/`.
 ```bash
 cd ~/Elegant/Elegant-Code-Verification-Service
 mvn clean install
@@ -166,9 +190,9 @@ $GLASSFISH_HOME/asadmin start-domain domain1
 
 ### 5. Deploy the service:
 
-	```bash
-	$GLASSFISH_HOME/asadmin deploy <path/to/service/war>
-	```
+```bash
+$GLASSFISH_HOME/asadmin deploy <path/to/service/war>
+```
 
 - for our service:
 	```bash
@@ -183,41 +207,55 @@ $GLASSFISH_HOME/asadmin start-domain domain1
 	curl http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification
 	```
 
-2. Register a new entry for verification:
+2. Register a new  verification request:
 
-	###### The JSON input data format:	The JSON input data format:
+	###### The JBMC request JSON format:
 	```bash
 	{
+		"tool": "JBMC", #(optional)
 		"className": "path.to.main",
 		"isMethod": true | false
 		"methodName": "fully.qualified.name:(arg types)return type"
 	}
 	```
 
+	###### The ESBMC request JSON format:
+	```bash
+	{
+		"tool": "ESBMC", #(optional)
+		"fileName": "relative/path/to/c-or-cpp-file",
+	}
+	```
+
 	###### Using the `curl`:
 
 	```bash
-	curl --header "Content-Type: application/json" --request POST  --data '{"className": "<path.to.main>", "isMethod": true | false, "methodName": "fully.qualified.name:(arg types)return type"}' http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newEntry
+	curl --header "Content-Type: application/json" --request POST  --data 'request-in-JSON-format' http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/new<JBMC|ESBMC>Entry
 	```
 
 	###### Examples:
 	
-	1. Verify the whole class (`test-cases/my/petty/examples/Simple.java`) :
+	1. Verify the whole class (`test-cases/my/petty/examples/Simple.java`) with JBMC :
 	
 	```bash
-	curl --header "Content-Type: application/json" --request POST  --data '{"className": "my.petty.examples.Simple"}' http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newEntry
+	curl --header "Content-Type: application/json" --request POST  --data '{"className": "my.petty.examples.Simple"}' http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newJBMCEntry
+	```
+	2. Verify the whole program (`test-cases/ex1.c`) with ESBMC :
+	
+	```bash
+	curl --header "Content-Type: application/json" --request POST  --data '{"fileName": "ex1.c"}' http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newESBMCEntry
 	```
 	
-	2. Verify the `void foo()` method:
+	2. Verify the `void foo()` method with JBMC:
 	
 	```bash
-	curl --header "Content-Type: application/json" --request POST  --data '{"className":"my.petty.examples.Simple", "isMethod":true, "methodName":"my.petty.examples.Simple.foo:()V"}'  http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newEntry
+	curl --header "Content-Type: application/json" --request POST  --data '{"className":"my.petty.examples.Simple", "isMethod":true, "methodName":"my.petty.examples.Simple.foo:()V"}'  http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newJBMCEntry
 	```
 	
-	3. Verify the `boolean foo(String)` method:
+	3. Verify the `boolean foo(String)` method with JBMC:
 	
 	```bash
-	curl --header "Content-Type: application/json" --request POST  --data '{"className":"my.petty.examples.Simple", "isMethod":true, "methodName":"my.petty.examples.Simple.foo:(Ljava/lang/String;)Z"}'  http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newEntry
+	curl --header "Content-Type: application/json" --request POST  --data '{"className":"my.petty.examples.Simple", "isMethod":true, "methodName":"my.petty.examples.Simple.foo:(Ljava/lang/String;)Z"}'  http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newJBMCEntry
 	```
 
 3. Get the verification outcome of an entry:
