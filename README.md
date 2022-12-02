@@ -75,16 +75,16 @@ cd ~/glassfish6
 echo "AS_JAVA=/usr/lib/jvm/openjdk-8u222-b10" >> ./glassfish/config/asenv.conf
 ```
 
-### 3. CMake v3.8:
+### 3. CMake v3.14:
 
 ```bash
 cd ~
 sudo apt remove cmake
 sudo apt purge --auto-remove cmake
 sudo apt-get install build-essential
-wget https://cmake.org/files/v3.8/cmake-3.8.0.tar.gz
-tar xf cmake-3.8.0.tar.gz
-cd cmake-3.8.0/
+wget https://cmake.org/files/v3.14/cmake-3.14.0.tar.gz
+tar xf cmake-3.14.0.tar.gz
+cd cmake-3.14.0/
 ./configure
 make
 sudo make install
