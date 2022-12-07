@@ -4,7 +4,10 @@ import jakarta.json.JsonStructure;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import uk.ac.manchester.codeverification.service.elegant.input.ESBMCRequest;
+import uk.ac.manchester.codeverification.service.elegant.input.FileHandler;
 import uk.ac.manchester.codeverification.service.elegant.input.JBMCRequest;
 import uk.ac.manchester.codeverification.service.elegant.input.Request;
 import uk.ac.manchester.codeverification.service.elegant.output.Entry;
@@ -73,9 +76,12 @@ public class ElegantCodeVerificationService {
     @POST
     @Path("newJBMCEntry")
     @Produces(MediaType.TEXT_PLAIN)
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response submit(JBMCRequest request) throws IOException, InterruptedException {
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public Response submit(@FormDataParam("file") InputStream fileInputStream,
+                           @FormDataParam("file") FormDataContentDisposition fileMetaData,
+                           @FormDataParam("request") JBMCRequest request) throws IOException, InterruptedException {
         isInitialized();
+        FileHandler.receiveFile(fileInputStream, fileMetaData);
         newToolInstance("JBMC");
         request.setTool("JBMC");
         return verifyAndStore(request);
@@ -84,9 +90,12 @@ public class ElegantCodeVerificationService {
     @POST
     @Path("newESBMCEntry")
     @Produces(MediaType.TEXT_PLAIN)
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response submit(ESBMCRequest request) throws IOException, InterruptedException {
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public Response submit(@FormDataParam("file") InputStream fileInputStream,
+                           @FormDataParam("file") FormDataContentDisposition fileMetaData,
+                           @FormDataParam("request") ESBMCRequest request) throws IOException, InterruptedException {
         isInitialized();
+        FileHandler.receiveFile(fileInputStream, fileMetaData);
         newToolInstance("ESBMC");
         request.setTool("ESBMC");
         return verifyAndStore(request);

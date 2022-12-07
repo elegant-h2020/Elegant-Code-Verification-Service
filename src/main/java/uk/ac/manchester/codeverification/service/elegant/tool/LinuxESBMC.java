@@ -42,6 +42,7 @@ public class LinuxESBMC implements VerificationTool{
         environment.put("SERVICE_DIR", System.getProperty("user.home") + "/Elegant/Elegant-Code-Verification-Service");
         //String testCasesPath = System.getProperty("user.home") + "/Elegant/Elegant-Code-Verification-Service/test-cases";
         environment.put("TEST_CASES", environment.get("SERVICE_DIR") + "/test-cases/esbmc");
+        environment.put("UPLOADED_FILES", environment.get("SERVICE_DIR") + "/uploaded");
         //environment.put("CLASSPATH", environment.get("JAVA_MODEL") + ":" + environment.get("TEST_CASES"));
         environment.put("OUTPUT", environment.get("SERVICE_DIR") + "/output/esbmc");
     }
@@ -49,7 +50,7 @@ public class LinuxESBMC implements VerificationTool{
     public String[] commandArgs(ESBMCRequest code) {
         ArrayList<String> args = new ArrayList<>();
         args.add(environment.get("ESBMC_BIN"));
-        final String file = code.getFileName();
+        final String file = environment.get("UPLOADED_FILES") + "/" + code.getFileName();
         args.add(file);
         String[] strArray = new String[args.size()];
         return args.toArray(strArray);
