@@ -1,9 +1,9 @@
 package uk.ac.manchester.codeverification.service.elegant.api;
 
 import jakarta.ws.rs.ApplicationPath;
-import jakarta.ws.rs.core.Application;
+import org.glassfish.jersey.server.ResourceConfig;
 
 @ApplicationPath("/api")
-public class ElegantCodeVerificationApplication extends Application {
+public class ElegantCodeVerificationApplication extends ResourceConfig {
 
 }
