@@ -1,15 +1,10 @@
 package uk.ac.manchester.codeverification.service.elegant.tool;
 
-import jakarta.json.Json;
-import jakarta.json.JsonReader;
 import jakarta.json.JsonStructure;
 import uk.ac.manchester.codeverification.service.elegant.input.ESBMCRequest;
 import uk.ac.manchester.codeverification.service.elegant.input.Request;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -29,6 +24,8 @@ public class LinuxESBMC implements VerificationTool{
         this.esbmcProcessBuilder = new ProcessBuilder();
         setUpToolEnvironment();
         esbmcProcessBuilder.directory(new File(environment.get("WORKDIR")));
+        // send the ESBMC output to nowhere..
+        esbmcProcessBuilder.redirectOutput(new File("/dev/null"));
     }
 
     @Override
@@ -53,6 +50,18 @@ public class LinuxESBMC implements VerificationTool{
         final String file = environment.get("UPLOADED_FILES") + "/" + code.getFileName();
         args.add(file);
         String[] strArray = new String[args.size()];
+        // analyze technique arguments
+        String technique = code.getTechnique().toLowerCase();
+        if (technique.equals("memoryleakcheck")) {
+            args.add("--memory-leak-check");
+        } else if (technique.equals("contextbound")) {
+            args.add("--context-bound");
+            args.add(String.valueOf(code.getIntArg()));
+        } else if (technique.equals("unwind")) {
+            args.add("--unwind");
+            args.add(String.valueOf(code.getIntArg()));
+        }
+        // TODO: add all techiniques
         return args.toArray(strArray);
     }
 
