@@ -1,4 +1,4 @@
-package uk.ac.manchester.codeverification.service.elegant.input;
+package uk.ac.manchester.elegant.verification.service.input;
 
 /**
  * This interface represents a code verification request with any tool.

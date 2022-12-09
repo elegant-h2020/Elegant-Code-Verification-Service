@@ -1,14 +1,12 @@
-package uk.ac.manchester.codeverification.service.elegant.tool;
+package uk.ac.manchester.elegant.verification.service.tool;
 
 import jakarta.json.*;
-import uk.ac.manchester.codeverification.service.elegant.input.JBMCRequest;
-import uk.ac.manchester.codeverification.service.elegant.input.Request;
+import uk.ac.manchester.elegant.verification.service.input.JBMCRequest;
+import uk.ac.manchester.elegant.verification.service.input.Request;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Map;
-
-import static uk.ac.manchester.codeverification.service.elegant.input.JBMCRequest.asJBMCRequest;
 
 public class LinuxJBMC implements VerificationTool {
 
@@ -83,7 +81,7 @@ public class LinuxJBMC implements VerificationTool {
      */
     @Override
     public void verifyCode(Request code) throws IOException {
-        jbmcProcessBuilder.command(commandArgs(asJBMCRequest(code)));
+        jbmcProcessBuilder.command(commandArgs(JBMCRequest.asJBMCRequest(code)));
         this.jbmcProcess = jbmcProcessBuilder.start();
     }
 

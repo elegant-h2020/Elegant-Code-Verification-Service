@@ -1,14 +1,12 @@
-package uk.ac.manchester.codeverification.service.elegant.tool;
+package uk.ac.manchester.elegant.verification.service.tool;
 
 import jakarta.json.JsonStructure;
-import uk.ac.manchester.codeverification.service.elegant.input.ESBMCRequest;
-import uk.ac.manchester.codeverification.service.elegant.input.Request;
+import uk.ac.manchester.elegant.verification.service.input.ESBMCRequest;
+import uk.ac.manchester.elegant.verification.service.input.Request;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Map;
-
-import static uk.ac.manchester.codeverification.service.elegant.input.ESBMCRequest.asESBMCRequest;
 
 public class LinuxESBMC implements VerificationTool{
 
@@ -74,7 +72,7 @@ public class LinuxESBMC implements VerificationTool{
      */
     @Override
     public void verifyCode(Request code) throws IOException {
-        esbmcProcessBuilder.command(commandArgs(asESBMCRequest(code)));
+        esbmcProcessBuilder.command(commandArgs(ESBMCRequest.asESBMCRequest(code)));
         this.esbmcProcess = esbmcProcessBuilder.start();
     }
 

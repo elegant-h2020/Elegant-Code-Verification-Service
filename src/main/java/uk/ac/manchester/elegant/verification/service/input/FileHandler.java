@@ -1,4 +1,4 @@
-package uk.ac.manchester.codeverification.service.elegant.input;
+package uk.ac.manchester.elegant.verification.service.input;
 
 import jakarta.ws.rs.WebApplicationException;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;

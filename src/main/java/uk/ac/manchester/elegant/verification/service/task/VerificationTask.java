@@ -1,11 +1,11 @@
-package uk.ac.manchester.codeverification.service.elegant.task;
+package uk.ac.manchester.elegant.verification.service.task;
 
 import jakarta.json.JsonStructure;
-import uk.ac.manchester.codeverification.service.elegant.api.ElegantCodeVerificationService;
-import uk.ac.manchester.codeverification.service.elegant.input.Request;
-import uk.ac.manchester.codeverification.service.elegant.tool.LinuxESBMC;
-import uk.ac.manchester.codeverification.service.elegant.tool.LinuxJBMC;
-import uk.ac.manchester.codeverification.service.elegant.tool.VerificationTool;
+import uk.ac.manchester.elegant.verification.service.api.ElegantCodeVerificationService;
+import uk.ac.manchester.elegant.verification.service.input.Request;
+import uk.ac.manchester.elegant.verification.service.tool.LinuxESBMC;
+import uk.ac.manchester.elegant.verification.service.tool.LinuxJBMC;
+import uk.ac.manchester.elegant.verification.service.tool.VerificationTool;
 
 import java.io.IOException;
 

@@ -1,4 +1,4 @@
-package uk.ac.manchester.codeverification.service.elegant.task;
+package uk.ac.manchester.elegant.verification.service.task;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package uk.ac.manchester.codeverification.service.elegant.api;
+package uk.ac.manchester.elegant.verification.service.api;
 
 import jakarta.ws.rs.ApplicationPath;
 import org.glassfish.jersey.server.ResourceConfig;

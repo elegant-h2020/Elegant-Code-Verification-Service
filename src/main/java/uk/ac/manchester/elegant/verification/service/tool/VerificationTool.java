@@ -1,7 +1,7 @@
-package uk.ac.manchester.codeverification.service.elegant.tool;
+package uk.ac.manchester.elegant.verification.service.tool;
 
 import jakarta.json.JsonStructure;
-import uk.ac.manchester.codeverification.service.elegant.input.Request;
+import uk.ac.manchester.elegant.verification.service.input.Request;
 
 import java.io.IOException;
 
