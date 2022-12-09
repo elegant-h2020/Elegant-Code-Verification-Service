@@ -1,4 +1,4 @@
-package uk.ac.manchester.codeverification.service.elegant.output;
+package uk.ac.manchester.codeverification.service.elegant.task;
 
 import jakarta.json.JsonStructure;
 

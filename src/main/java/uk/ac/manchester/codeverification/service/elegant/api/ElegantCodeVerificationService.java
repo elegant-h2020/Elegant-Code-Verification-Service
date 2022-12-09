@@ -1,37 +1,55 @@
 package uk.ac.manchester.codeverification.service.elegant.api;
 
-import jakarta.json.JsonStructure;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
-import uk.ac.manchester.codeverification.service.elegant.input.ESBMCRequest;
-import uk.ac.manchester.codeverification.service.elegant.input.FileHandler;
-import uk.ac.manchester.codeverification.service.elegant.input.JBMCRequest;
-import uk.ac.manchester.codeverification.service.elegant.input.Request;
-import uk.ac.manchester.codeverification.service.elegant.output.Entry;
-import uk.ac.manchester.codeverification.service.elegant.output.VerificationEntries;
-import uk.ac.manchester.codeverification.service.elegant.output.VerificationResult;
-import uk.ac.manchester.codeverification.service.elegant.tool.*;
+import uk.ac.manchester.codeverification.service.elegant.input.*;
+import uk.ac.manchester.codeverification.service.elegant.task.VerificationTasks;
+import uk.ac.manchester.codeverification.service.elegant.task.ServiceThreadPoolExecutor;
+import uk.ac.manchester.codeverification.service.elegant.task.VerificationTask;
 
 import java.io.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Path("/verification")
 public class ElegantCodeVerificationService {
 
-    private static final String OS;
-    private static VerificationTool verificationTool;
-    private static VerificationEntries verificationEntries;
-    private static boolean isInitialized = false;
+    /**
+     * The unique id of a Task.
+     */
+    private static final AtomicLong uid;
+    /**
+     * A blocking queue that stores the incoming requests.
+     */
+    private static BlockingQueue<Runnable> blockingQueue;
+    /**
+     * A customized {@link ThreadPoolExecutor} that consumes the incoming requests in a thread-safe manner.
+     */
+    private static ServiceThreadPoolExecutor executor;
+    /**
+     * A shared data structure that stores all the submitted {@link VerificationTask}s.
+     */
+    private static VerificationTasks verificationTasks;
 
+    // service initialization
     static {
-        OS = System.getProperty("os.name").toLowerCase();
+        verificationTasks = new VerificationTasks();
+        uid = new AtomicLong(-1);
+        blockingQueue = new LinkedBlockingQueue<Runnable>();
+        executor = new ServiceThreadPoolExecutor(4, 8, 10, TimeUnit.SECONDS, blockingQueue);
+
+        // Start all core threads of the executor
+        executor.prestartAllCoreThreads();
     }
 
-    private void initService() {
-        verificationEntries = new VerificationEntries();
-        isInitialized = true;
+    public static VerificationTasks getVerificationTasks() {
+        return verificationTasks;
     }
 
     /**
@@ -39,9 +57,7 @@ public class ElegantCodeVerificationService {
      */
     @GET
     @Produces("text/plain")
-    public Response serviceStart() throws IOException, InterruptedException {
-
-        initService();
+    public Response serviceStart() {
 
         return Response
                 .status(Response.Status.OK)
@@ -51,26 +67,25 @@ public class ElegantCodeVerificationService {
     }
 
     /**
-     * Ensures that any API call can be safely utilized even prior to the explicit initialization of the service.
+     * Handles the incoming JBMC or ESBMC request.
+     * @param request a code verification {@link Request} object.
+     * @param tool the {@link String} name of the code verification tool.
+     * @return the {@link Response} of the service.
      */
-    private void isInitialized() throws IOException, InterruptedException {
-        if (!isInitialized) {
-            serviceStart();
+    public Response handle(Request request, String tool) {
+        // increment unique id
+        final long entryId = uid.incrementAndGet();
+        // wrap the request as a VerificationTask and add it into the queue
+        final boolean accepted = blockingQueue.offer(new VerificationTask(entryId, tool, request));
+        if (!accepted) {
+            // no space is currently available for the task
+            // TODO: handle this case
         }
-    }
 
-    private void newToolInstance(String tool) {
-        if (OS.startsWith("linux")) {
-            if (tool.equals("JBMC")) {
-                verificationTool = new LinuxJBMC();
-            } else if (tool.equals("ESBMC")) {
-                verificationTool = new LinuxESBMC();
-            } else {
-                throw new UnsupportedOperationException("Code verification tool " + tool + " is currently not supported.");
-            }
-        } else {
-            throw new UnsupportedOperationException("Code verification Service is currently not supported for " + OS + ".");
-        }
+        return Response.status(Response.Status.ACCEPTED)
+                .type(MediaType.TEXT_PLAIN_TYPE)
+                .entity("New code verification request has been registered (#" + entryId + ")\n")
+                .build();
     }
 
     @POST
@@ -79,12 +94,10 @@ public class ElegantCodeVerificationService {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response submit(@FormDataParam("file") InputStream fileInputStream,
                            @FormDataParam("file") FormDataContentDisposition fileMetaData,
-                           @FormDataParam("request") JBMCRequest request) throws IOException, InterruptedException {
-        isInitialized();
+                           @FormDataParam("request") JBMCRequest request) {
+
         FileHandler.receiveFile(fileInputStream, fileMetaData);
-        newToolInstance("JBMC");
-        request.setTool("JBMC");
-        return verifyAndStore(request);
+        return handle(request, "JBMC");
     }
 
     @POST
@@ -93,31 +106,10 @@ public class ElegantCodeVerificationService {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response submit(@FormDataParam("file") InputStream fileInputStream,
                            @FormDataParam("file") FormDataContentDisposition fileMetaData,
-                           @FormDataParam("request") ESBMCRequest request) throws IOException, InterruptedException {
-        isInitialized();
+                           @FormDataParam("request") ESBMCRequest request) {
+
         FileHandler.receiveFile(fileInputStream, fileMetaData);
-        newToolInstance("ESBMC");
-        request.setTool("ESBMC");
-        return verifyAndStore(request);
-    }
-
-    public Response verifyAndStore(Request request) throws IOException, InterruptedException {
-        // verify
-        verificationTool.verifyCode(request);
-
-        // store the output and exit code as a new VerificationResult
-        JsonStructure output = verificationTool.readOutput();
-        int exitCode = verificationTool.waitFor();
-        VerificationResult result = new VerificationResult(output, exitCode);
-
-        // store the result as a new Entry
-        long entryId = verificationEntries.registerEntry(new Entry(request, result));
-
-        return Response
-                .status(Response.Status.ACCEPTED)
-                .type(MediaType.TEXT_PLAIN_TYPE)
-                .entity("New code verification request has been registered (#" + entryId + ")\n")
-                .build();
+        return handle(request, "ESBMC");
     }
 
 
@@ -127,15 +119,15 @@ public class ElegantCodeVerificationService {
     @GET
     @Path("getEntry")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getEntry(@QueryParam("entryId") String entryId) throws IOException, InterruptedException {
-        isInitialized();
-        int id = Integer.parseInt(entryId);
-        Entry e = verificationEntries.getEntry(id);
+    public Response getEntry(@QueryParam("entryId") String entryId) {
 
-        if (e != null) {
+        int id = Integer.parseInt(entryId);
+        VerificationTask task = verificationTasks.getTask(id);
+
+        if (task != null) {
             return Response
                     .status(Response.Status.OK)
-                    .entity(e)
+                    .entity(task)
                     .type(MediaType.APPLICATION_JSON)
                     .build();
         } else {
@@ -153,9 +145,9 @@ public class ElegantCodeVerificationService {
     @DELETE
     @Path("removeEntry")
     @Produces("text/plain")
-    public Response removeEntry(@QueryParam("entryId") long entryId) throws IOException, InterruptedException {
-        isInitialized();
-        Entry deleted = verificationEntries.removeEntry(entryId);
+    public Response removeEntry(@QueryParam("entryId") long entryId) {
+
+        VerificationTask deleted = verificationTasks.removeEntry(entryId);
         Response.Status responseStatus = (deleted != null) ? Response.Status.FOUND : Response.Status.NOT_FOUND;
         String responseMsg = (deleted != null) ? "Code verification entry (#" + entryId + ") has been deleted.\n" : "Invalid Entry.\n";
         return Response
@@ -171,12 +163,12 @@ public class ElegantCodeVerificationService {
     @GET
     @Path("getEntries")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getEntries() throws IOException, InterruptedException {
-        isInitialized();
+    public Response getEntries() {
+
         return Response
                 .status(Response.Status.ACCEPTED)
                 .type(MediaType.APPLICATION_JSON_TYPE)
-                .entity(verificationEntries.listEntries())
+                .entity(verificationTasks.listEntries())
                 .build();
     }
 }

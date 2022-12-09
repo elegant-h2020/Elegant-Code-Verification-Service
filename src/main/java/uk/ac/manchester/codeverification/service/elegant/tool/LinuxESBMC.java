@@ -19,12 +19,15 @@ public class LinuxESBMC implements VerificationTool{
     int                 exitCode;
     String              output;
 
+    String              toolName;
+
     public LinuxESBMC() {
         super();
+        this.toolName = "ESBMC";
         this.esbmcProcessBuilder = new ProcessBuilder();
         setUpToolEnvironment();
         esbmcProcessBuilder.directory(new File(environment.get("WORKDIR")));
-        // send the ESBMC output to nowhere..
+        // send the ESBMC output to nowhere...
         esbmcProcessBuilder.redirectOutput(new File("/dev/null"));
     }
 
@@ -87,6 +90,11 @@ public class LinuxESBMC implements VerificationTool{
     @Override
     public String getEnvironmentVariable(String key) {
         return environment.get(key);
+    }
+
+    @Override
+    public String getName() {
+        return toolName;
     }
 
     @Override

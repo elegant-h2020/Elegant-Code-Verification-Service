@@ -19,6 +19,8 @@ public class LinuxJBMC implements VerificationTool {
     int                 exitCode;
     String              output;
 
+    String              toolName;
+
      // TODO: run with sh for compatibility.
      //static String cmdPrefix = "sh -c ";
 
@@ -27,6 +29,7 @@ public class LinuxJBMC implements VerificationTool {
      */
     public LinuxJBMC() {
         super();
+        this.toolName = "JBMC";
         this.jbmcProcessBuilder = new ProcessBuilder();
         setUpToolEnvironment();
         jbmcProcessBuilder.directory(new File(environment.get("WORKDIR")));
@@ -95,6 +98,11 @@ public class LinuxJBMC implements VerificationTool {
     @Override
     public String getEnvironmentVariable(String key) {
         return environment.get(key);
+    }
+
+    @Override
+    public String getName() {
+        return toolName;
     }
 
     @Override

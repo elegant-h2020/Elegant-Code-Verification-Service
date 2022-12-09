@@ -11,7 +11,7 @@ public interface VerificationTool {
     void verifyCode(Request code) throws IOException, InterruptedException;
     JsonStructure readOutput();
     String getEnvironmentVariable(String var);
-
+    String getName();
     int getExitCode();
     String getOutput();
     int waitFor() throws InterruptedException;

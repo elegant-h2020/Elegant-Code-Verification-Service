@@ -240,31 +240,32 @@ $GLASSFISH_HOME/asadmin deploy <path/to/service/war>
 	1. Verify the whole class (`test-cases/my/petty/examples/Simple.java`) with JBMC :
 	
 	```bash
-	curl -X POST -H "Content-Type: multipart/form-data" -F "file=@test-cases/my/petty/examples/Simple.class" -F "request={\"className\": \"my.petty.examples.Simple\"}" http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newJBMCEntry
+	curl -X POST -H "Content-Type: multipart/form-data" -F "file=@test-cases/my/petty/examples/Simple.class" -F "request={\"className\": \"my.petty.examples.Simple\"};type=application/json" http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newJBMCEntry
 	```
 	
 	2. Verify the `void foo()` method with JBMC:
 	
 	```bash
-	curl -X POST -H "Content-Type: multipart/form-data" -F "file=@test-cases/my/petty/examples/Simple.class" -F "request={\"className\":\"my.petty.examples.Simple\", \"isMethod\":true, \"methodName\":\"my.petty.examples.Simple.foo:()V\"}"  http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newJBMCEntry
+	curl -X POST -H "Content-Type: multipart/form-data" -F "file=@test-cases/my/petty/examples/Simple.class" -F "request={\"className\":\"my.petty.examples.Simple\", \"isMethod\":true, \"methodName\":\"my.petty.examples.Simple.foo:()V\"};type=application/json"  http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newJBMCEntry
 	```
 	
 	3. Verify the `boolean foo(String)` method with JBMC:
+	Note: the `Ljava/lang/String;` -> `Ljava/lang/String%3B`
 	
 	```bash
-	curl -X POST -H "Content-Type: multipart/form-data" -F "file=@test-cases/my/petty/examples/Simple.class" -F "request={\"className\":\"my.petty.examples.Simple\", \"isMethod\":true, \"methodName\":\"my.petty.examples.Simple.foo:(Ljava/lang/String;)Z\"}"  http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newJBMCEntry
+	curl -X POST -H "Content-Type: multipart/form-data" -F "file=@test-cases/my/petty/examples/Simple.class" -F "request={\"className\":\"my.petty.examples.Simple\", \"isMethod\":true, \"methodName\":\"my.petty.examples.Simple.foo:(Ljava/lang/String;)Z\"};type=application/json" http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newJBMCEntry
 	```
 
 	4. Verify the whole program (`test-cases/ex1.c`) with ESBMC (memory leak check):
 	
 	```bash
-	curl -X POST -H "Content-Type: multipart/form-data" -F "file=@test-cases/my/petty/examples/Simple.class" -F "request={\"fileName\": \"ex1.c\", \"technique\": \"memoryleakcheck\"}' http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newESBMCEntry
+	curl -X POST -H "Content-Type: multipart/form-data" -F "file=@test-cases/my/petty/examples/Simple.class" -F "request={\"fileName\": \"ex1.c\", \"technique\": \"memoryleakcheck\"};type=application/json" http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newESBMCEntry
 	```
 
 	5. Verify the whole program (`test-cases/ex1.c`) with ESBMC (unwind 3):
 	
 	```bash
-	curl -X POST -H "Content-Type: multipart/form-data" -F "file=@test-cases/esbmc/ex1.c" -F "request={\"fileName\": \"ex1.c\", \"technique\": \"memoryleakcheck\", \"intArg\": 3}' http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newESBMCEntry
+	curl -X POST -H "Content-Type: multipart/form-data" -F "file=@test-cases/esbmc/ex1.c" -F "request={\"fileName\": \"ex1.c\", \"technique\": \"memoryleakcheck\", \"intArg\": 3};type=application/json" http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newESBMCEntry
 	```
 
 3. Get the verification outcome of an entry:

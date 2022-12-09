@@ -2,7 +2,6 @@ package uk.ac.manchester.codeverification.service.elegant.input;
 
 public class ESBMCRequest implements Request{
 
-    private String tool;
     private String fileName;
     /**
      * The verification techniques:
@@ -25,10 +24,6 @@ public class ESBMCRequest implements Request{
         return (ESBMCRequest) request;
     }
 
-    public String getTool() {
-        return tool;
-    }
-
     public String getFileName() {
         return fileName;
     }
@@ -39,10 +34,6 @@ public class ESBMCRequest implements Request{
 
     public int getIntArg() {
         return intArg;
-    }
-
-    public void setTool(String tool) {
-        this.tool = tool;
     }
 
     public void setFileName(String fileName) {
@@ -59,8 +50,7 @@ public class ESBMCRequest implements Request{
 
     @Override
     public String toString() {
-        return "Request{"           +
-                "tool = \""         + tool        + "\"" +
+        return "ESBMCRequest{"           +
                 ", fileName = \""   + fileName    + "\"" +
                 "}";
     }

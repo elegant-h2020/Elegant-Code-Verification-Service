@@ -6,13 +6,12 @@ package uk.ac.manchester.codeverification.service.elegant.input;
  */
 public class JBMCRequest implements Request{
 
-    private String tool;
     private String className;
     private boolean isMethod;
     // Fully qualified name of a method.
     private String methodName;
 
-    /*public JBMCRequest(String tool, String className, boolean isMethod, String methodName) {
+    /*public JBMCRequest(String className, boolean isMethod, String methodName) {
         this.tool = tool;
         this.className = className;
         this.isMethod = isMethod;
@@ -21,10 +20,6 @@ public class JBMCRequest implements Request{
 
     public static JBMCRequest asJBMCRequest(Request request) {
         return (JBMCRequest) request;
-    }
-
-    public String getTool() {
-        return tool;
     }
 
     public String getClassName() {
@@ -37,10 +32,6 @@ public class JBMCRequest implements Request{
 
     public String getMethodName() {
         return methodName;
-    }
-
-    public void setTool(String tool) {
-        this.tool = tool;
     }
 
     public void setClassName(String classname) {
@@ -57,8 +48,7 @@ public class JBMCRequest implements Request{
 
     @Override
     public String toString() {
-        return "Request{" +
-                "tool = \""           + tool          + "\"" +
+        return "JBMCRequest{" +
                 ", className = \""    + className     + "\"" +
                 ", isMethod = "       + isMethod      +
                 ", methodName = \""   + methodName    + "\"" +
