@@ -8,7 +8,7 @@ import java.nio.file.Files;
 
 public class FileHandler {
 
-    final static String UPLOAD_PATH = "/home/orion/Elegant/Elegant-Code-Verification-Service/uploaded/";
+    final static String UPLOAD_PATH = System.getProperty("user.home") + "/Elegant/Elegant-Code-Verification-Service/uploaded/";
 
     /**
      * Receives a file and stores it in $SERVICE_HOME/uploaded
