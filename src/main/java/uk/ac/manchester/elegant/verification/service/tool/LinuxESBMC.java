@@ -45,24 +45,42 @@ public class LinuxESBMC implements VerificationTool{
         environment.put("OUTPUT", environment.get("SERVICE_DIR") + "/output/esbmc");
     }
 
+    /**
+     * A not configurable ESBMC configuration.
+     */
+    public void addOptions(ArrayList<String> args) {
+        // utilize the FuSeBMC options
+        args.add("--no-div-by-zero-check");
+        args.add("--force-malloc-success");
+        args.add("--state-hashing");
+        args.add("--no-align-check");
+        args.add("--k-step");
+        args.add("5");
+        args.add("--floatbv");
+        args.add("--context-bound");
+        args.add("2");
+        args.add("--show-cex");
+        args.add("--quiet");
+        args.add("--unlimited-k-steps");
+        args.add("--no-pointer-check");
+        args.add("--no-bounds-check");
+        args.add("--no-slice");
+        args.add("--interval-analysis");
+        args.add("--incremental-bmc");
+        args.add("--timeout");
+        args.add("878s");
+        args.add("--memlimit");
+        args.add("10g");
+    }
+
     public String[] commandArgs(ESBMCRequest code) {
         ArrayList<String> args = new ArrayList<>();
         args.add(environment.get("ESBMC_BIN"));
         final String file = environment.get("UPLOADED_FILES") + "/" + code.getFileName();
         args.add(file);
         String[] strArray = new String[args.size()];
-        // analyze technique arguments
-        String technique = code.getTechnique().toLowerCase();
-        if (technique.equals("memoryleakcheck")) {
-            args.add("--memory-leak-check");
-        } else if (technique.equals("contextbound")) {
-            args.add("--context-bound");
-            args.add(String.valueOf(code.getIntArg()));
-        } else if (technique.equals("unwind")) {
-            args.add("--unwind");
-            args.add(String.valueOf(code.getIntArg()));
-        }
-        // TODO: add all techiniques
+        // TODO: customize options ?
+        addOptions(args);
         return args.toArray(strArray);
     }
 
