@@ -3,6 +3,9 @@ package uk.ac.manchester.elegant.verification.service.task;
 import jakarta.json.JsonStructure;
 import uk.ac.manchester.elegant.verification.service.api.ElegantCodeVerificationService;
 import uk.ac.manchester.elegant.verification.service.input.Request;
+import uk.ac.manchester.elegant.verification.service.task.result.ESBMCVerificationResult;
+import uk.ac.manchester.elegant.verification.service.task.result.JBMCVerificationResult;
+import uk.ac.manchester.elegant.verification.service.task.result.VerificationResult;
 import uk.ac.manchester.elegant.verification.service.tool.LinuxESBMC;
 import uk.ac.manchester.elegant.verification.service.tool.LinuxJBMC;
 import uk.ac.manchester.elegant.verification.service.tool.VerificationTool;
@@ -59,16 +62,35 @@ public class VerificationTask implements Runnable {
         verificationTasks().registerTask(id, this);
     }
 
+    /**
+     * Stores the output and exit code into the {@link VerificationTask} entry
+     * as either a new {@link JBMCVerificationResult}, or a new {@link ESBMCVerificationResult} object.
+     */
+    private void storeResult() throws InterruptedException {
+        String tool = verificationToolInstance.getName();
+
+        if (tool.equals("JBMC")) {
+            final JsonStructure output = (JsonStructure) verificationToolInstance.readOutput();
+            final int exitCode = verificationToolInstance.waitFor();
+            verificationTasks().updateTaskResult(taskId, new JBMCVerificationResult(output, exitCode));
+
+        } else if (tool.equals("ESBMC")) {
+            final String output = (String) verificationToolInstance.readOutput();
+            final int exitCode = verificationToolInstance.waitFor();
+            verificationTasks().updateTaskResult(taskId, new ESBMCVerificationResult(output, exitCode));
+        }
+
+    }
+
     @Override
     public void run() {
         try {
             // do the verification
             verificationToolInstance.verifyCode(request);
-            // store the output and exit code as a new VerificationResult
-            final JsonStructure output = verificationToolInstance.readOutput();
-            final int exitCode = verificationToolInstance.waitFor();
-            // update the registered task
-            verificationTasks().updateTaskResult(taskId, new VerificationResult(output, exitCode));
+
+            // store the result
+            storeResult();
+
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }

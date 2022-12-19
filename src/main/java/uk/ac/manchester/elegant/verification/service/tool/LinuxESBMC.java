@@ -1,6 +1,5 @@
 package uk.ac.manchester.elegant.verification.service.tool;
 
-import jakarta.json.JsonStructure;
 import uk.ac.manchester.elegant.verification.service.input.ESBMCRequest;
 import uk.ac.manchester.elegant.verification.service.input.Request;
 
@@ -96,11 +95,34 @@ public class LinuxESBMC implements VerificationTool{
 
     /**
      * ESBMC does not export output in JSON format.
-     * @return an empty JsonStructure object.
+     * @return an ugly String representation of the ESBMC output.
      */
     @Override
-    public JsonStructure readOutput() {
-        return JsonStructure.EMPTY_JSON_OBJECT.asJsonObject();
+    public Object readOutput() {
+        StringBuilder sb = new StringBuilder();
+
+        String line;
+        try {
+            BufferedReader processOutputReader = new BufferedReader(new InputStreamReader(this.esbmcProcess.getInputStream()));
+            sb.append("<InputStream>");
+            while ((line = processOutputReader.readLine()) != null) {
+                System.out.println("line = " + line);
+                sb.append(line + System.lineSeparator());
+            }
+            sb.append("<InputStream>");
+
+            BufferedReader processOutputReader2 = new BufferedReader(new InputStreamReader(this.esbmcProcess.getErrorStream()));
+            sb.append("<ErrorStream>");
+            while ((line = processOutputReader2.readLine()) != null) {
+                sb.append(line + System.lineSeparator());
+            }
+            sb.append("<ErrorStream>");
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return sb.substring(0, sb.length() - 1);
     }
 
     @Override

@@ -1,5 +1,7 @@
 package uk.ac.manchester.elegant.verification.service.task;
 
+import uk.ac.manchester.elegant.verification.service.task.result.VerificationResult;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;

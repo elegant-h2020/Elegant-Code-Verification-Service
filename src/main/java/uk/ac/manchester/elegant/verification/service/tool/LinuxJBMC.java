@@ -85,8 +85,12 @@ public class LinuxJBMC implements VerificationTool {
         this.jbmcProcess = jbmcProcessBuilder.start();
     }
 
+    /**
+     * JBMC exports output in JSON format.
+     * @return a {@link JsonStructure} object.
+     */
     @Override
-    public JsonStructure readOutput() {
+    public Object readOutput() {
         InputStream inputStream = this.jbmcProcess.getInputStream();
         JsonReader jsonReader = Json.createReader(new InputStreamReader(inputStream));
 
