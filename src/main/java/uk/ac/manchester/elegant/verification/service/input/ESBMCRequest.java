@@ -4,10 +4,9 @@ public class ESBMCRequest implements Request{
 
     private String fileName;
 
-    /*public ESBMCRequest(String tool, String fileName) {
-        this.tool = tool;
+    public ESBMCRequest(String fileName) {
         this.fileName = fileName;
-    }*/
+    }
 
     public static ESBMCRequest asESBMCRequest(Request request) {
         return (ESBMCRequest) request;

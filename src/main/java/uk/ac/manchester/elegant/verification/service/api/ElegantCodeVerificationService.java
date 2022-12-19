@@ -92,27 +92,27 @@ public class ElegantCodeVerificationService {
     }
 
     @POST
-    @Path("newJBMCEntry")
+    @Path("newEntry")
     @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response submit(@FormDataParam("file") InputStream fileInputStream,
                            @FormDataParam("file") FormDataContentDisposition fileMetaData,
-                           @FormDataParam("request") JBMCRequest request) {
+                           @FormDataParam("request") InputStream requestInputStream) {
 
         FileHandler.receiveFile(fileInputStream, fileMetaData);
-        return handle(request, "JBMC");
-    }
+        Request request = FileHandler.receiveRequest(requestInputStream);
 
-    @POST
-    @Path("newESBMCEntry")
-    @Produces(MediaType.TEXT_PLAIN)
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Response submit(@FormDataParam("file") InputStream fileInputStream,
-                           @FormDataParam("file") FormDataContentDisposition fileMetaData,
-                           @FormDataParam("request") ESBMCRequest request) {
+        if (request instanceof JBMCRequest) {
+            return handle(request, "JBMC");
+        } else if (request instanceof ESBMCRequest) {
+            return handle(request, "ESBMC");
+        } else {
+            return Response
+                    .status(Response.Status.NOT_ACCEPTABLE)
+                    .entity("Not acceptable request.")
+                    .build();
+        }
 
-        FileHandler.receiveFile(fileInputStream, fileMetaData);
-        return handle(request, "ESBMC");
     }
 
 

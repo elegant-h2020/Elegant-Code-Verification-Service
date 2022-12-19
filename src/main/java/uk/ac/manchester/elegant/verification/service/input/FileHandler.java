@@ -1,5 +1,6 @@
 package uk.ac.manchester.elegant.verification.service.input;
 
+import jakarta.json.*;
 import jakarta.ws.rs.WebApplicationException;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 
@@ -28,6 +29,40 @@ public class FileHandler {
             out.close();
         } catch (IOException e) {
             throw new WebApplicationException("Error while uploading file. Please try again !!");
+        }
+    }
+
+    private static JsonObject getJsonObjectFromFile(InputStream fileInputStream) {
+        // read the json file
+        JsonReader reader = Json.createReader(new InputStreamReader(fileInputStream));
+        JsonObject jsonObject = reader.read().asJsonObject();
+
+        reader.close();
+        return jsonObject;
+    }
+
+    /**
+     * De-serialize the json file to either a {@link JBMCRequest} or a {@link ESBMCRequest} Java object in a custom manner.
+     */
+    public static Request receiveRequest(InputStream requestInputStream) {
+        JsonObject jsonObject = getJsonObjectFromFile(requestInputStream);
+
+        final String tool = jsonObject.getString("tool");
+
+        if (tool.equals("JBMC")) {
+            final String className = jsonObject.getString("className");
+            final boolean isMethod = jsonObject.getBoolean("isMethod");
+            final String methodName = jsonObject.getString("methodName");
+
+            return new JBMCRequest(className, isMethod, methodName);
+
+        } else if (tool.equals("ESBMC")) {
+            final String fileName = jsonObject.getString("fileName");
+
+            return new ESBMCRequest(fileName);
+
+        } else {
+            return null;
         }
     }
 }

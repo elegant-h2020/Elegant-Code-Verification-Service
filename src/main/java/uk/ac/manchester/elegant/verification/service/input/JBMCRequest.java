@@ -11,12 +11,11 @@ public class JBMCRequest implements Request{
     // Fully qualified name of a method.
     private String methodName;
 
-    /*public JBMCRequest(String className, boolean isMethod, String methodName) {
-        this.tool = tool;
+    public JBMCRequest(String className, boolean isMethod, String methodName) {
         this.className = className;
         this.isMethod = isMethod;
         this.methodName = methodName;
-    }*/
+    }
 
     public static JBMCRequest asJBMCRequest(Request request) {
         return (JBMCRequest) request;
