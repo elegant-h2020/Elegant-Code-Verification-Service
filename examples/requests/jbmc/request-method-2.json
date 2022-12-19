@@ -1,0 +1,6 @@
+{
+	"tool" : "JBMC",
+	"className": "my.petty.examples.Simple",
+	"isMethod": true,
+	"methodName": "my.petty.examples.Simple.foo:(Ljava/lang/String;)Z"
+}

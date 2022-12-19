@@ -38,9 +38,8 @@ public class LinuxESBMC implements VerificationTool{
         //environment.put("JAVA_MODEL", environment.get("WORKDIR") + "/jbmc/lib/java-models-library/target/core-models.jar");
         environment.put("SERVICE_DIR", System.getProperty("user.home") + "/Elegant/Elegant-Code-Verification-Service");
         //String testCasesPath = System.getProperty("user.home") + "/Elegant/Elegant-Code-Verification-Service/test-cases";
-        environment.put("TEST_CASES", environment.get("SERVICE_DIR") + "/test-cases/esbmc");
+        environment.put("EXAMPLE_CODES", environment.get("SERVICE_DIR") + "/examples/codes/c");
         environment.put("UPLOADED_FILES", environment.get("SERVICE_DIR") + "/uploaded");
-        //environment.put("CLASSPATH", environment.get("JAVA_MODEL") + ":" + environment.get("TEST_CASES"));
         environment.put("OUTPUT", environment.get("SERVICE_DIR") + "/output/esbmc");
     }
 
