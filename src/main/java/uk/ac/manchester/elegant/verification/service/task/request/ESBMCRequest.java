@@ -1,4 +1,4 @@
-package uk.ac.manchester.elegant.verification.service.input;
+package uk.ac.manchester.elegant.verification.service.task.request;
 
 public class ESBMCRequest implements Request{
 

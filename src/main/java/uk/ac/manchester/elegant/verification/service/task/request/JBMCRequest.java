@@ -1,4 +1,4 @@
-package uk.ac.manchester.elegant.verification.service.input;
+package uk.ac.manchester.elegant.verification.service.task.request;
 
 /**
  * This class represents a code verification request with the JBMC tool.

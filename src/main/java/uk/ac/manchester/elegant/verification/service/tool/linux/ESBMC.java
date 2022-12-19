@@ -1,13 +1,14 @@
-package uk.ac.manchester.elegant.verification.service.tool;
+package uk.ac.manchester.elegant.verification.service.tool.linux;
 
-import uk.ac.manchester.elegant.verification.service.input.ESBMCRequest;
-import uk.ac.manchester.elegant.verification.service.input.Request;
+import uk.ac.manchester.elegant.verification.service.task.request.ESBMCRequest;
+import uk.ac.manchester.elegant.verification.service.task.request.Request;
+import uk.ac.manchester.elegant.verification.service.tool.VerificationTool;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class LinuxESBMC implements VerificationTool{
+public class ESBMC implements VerificationTool {
 
     ProcessBuilder      esbmcProcessBuilder;
     Map<String, String> environment;
@@ -18,7 +19,7 @@ public class LinuxESBMC implements VerificationTool{
 
     String              toolName;
 
-    public LinuxESBMC() {
+    public ESBMC() {
         super();
         this.toolName = "ESBMC";
         this.esbmcProcessBuilder = new ProcessBuilder();

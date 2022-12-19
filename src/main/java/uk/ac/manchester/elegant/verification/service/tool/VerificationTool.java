@@ -1,6 +1,6 @@
 package uk.ac.manchester.elegant.verification.service.tool;
 
-import uk.ac.manchester.elegant.verification.service.input.Request;
+import uk.ac.manchester.elegant.verification.service.task.request.Request;
 
 import java.io.IOException;
 

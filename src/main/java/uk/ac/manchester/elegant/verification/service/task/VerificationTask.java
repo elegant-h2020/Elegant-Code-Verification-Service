@@ -2,12 +2,12 @@ package uk.ac.manchester.elegant.verification.service.task;
 
 import jakarta.json.JsonStructure;
 import uk.ac.manchester.elegant.verification.service.api.ElegantCodeVerificationService;
-import uk.ac.manchester.elegant.verification.service.input.Request;
+import uk.ac.manchester.elegant.verification.service.task.request.Request;
 import uk.ac.manchester.elegant.verification.service.task.result.ESBMCVerificationResult;
 import uk.ac.manchester.elegant.verification.service.task.result.JBMCVerificationResult;
 import uk.ac.manchester.elegant.verification.service.task.result.VerificationResult;
-import uk.ac.manchester.elegant.verification.service.tool.LinuxESBMC;
-import uk.ac.manchester.elegant.verification.service.tool.LinuxJBMC;
+import uk.ac.manchester.elegant.verification.service.tool.linux.ESBMC;
+import uk.ac.manchester.elegant.verification.service.tool.linux.JBMC;
 import uk.ac.manchester.elegant.verification.service.tool.VerificationTool;
 
 import java.io.IOException;
@@ -43,9 +43,9 @@ public class VerificationTask implements Runnable {
 
         if (OS.startsWith("linux")) {
             if (tool.equals("JBMC")) {
-                verificationToolInstance = new LinuxJBMC();
+                verificationToolInstance = new JBMC();
             } else if (tool.equals("ESBMC")) {
-                verificationToolInstance = new LinuxESBMC();
+                verificationToolInstance = new ESBMC();
             } else {
                 throw new UnsupportedOperationException("Code verification tool " + tool + " is currently not supported.");
             }

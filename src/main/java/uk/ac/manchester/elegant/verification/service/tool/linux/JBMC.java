@@ -1,14 +1,15 @@
-package uk.ac.manchester.elegant.verification.service.tool;
+package uk.ac.manchester.elegant.verification.service.tool.linux;
 
 import jakarta.json.*;
-import uk.ac.manchester.elegant.verification.service.input.JBMCRequest;
-import uk.ac.manchester.elegant.verification.service.input.Request;
+import uk.ac.manchester.elegant.verification.service.task.request.JBMCRequest;
+import uk.ac.manchester.elegant.verification.service.task.request.Request;
+import uk.ac.manchester.elegant.verification.service.tool.VerificationTool;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class LinuxJBMC implements VerificationTool {
+public class JBMC implements VerificationTool {
 
     ProcessBuilder      jbmcProcessBuilder;
     Map<String, String> environment;
@@ -25,7 +26,7 @@ public class LinuxJBMC implements VerificationTool {
     /**
      * Initialize environment and the jbmc process.
      */
-    public LinuxJBMC() {
+    public JBMC() {
         super();
         this.toolName = "JBMC";
         this.jbmcProcessBuilder = new ProcessBuilder();
