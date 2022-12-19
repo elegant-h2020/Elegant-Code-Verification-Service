@@ -2,17 +2,9 @@
 
 ## Description
 
-The Code Verification Service is dockerized to enhance easiness in deployment by avoiding configuration, environment and version conflicts. However, the service source, the cbmc and the esbmc are not included into the docker image since they live in private repositories. To work arround this issue we use `docker-sync` that enables a container to co-utilize specified directories synchronously with the host.
+The Code Verification Service is dockerized to enhance easiness in deployment by avoiding configuration, environment and version conflicts. However, the service source is not included into the docker image since it lives in private repository. We use `docker-sync` as a workaround to enable the container to co-utilize specified directories synchronously with the host.
 
-##### 1. Clone the CBMC source:
-```bash
-mkdir ~/Elegant
-git clone git@github.com:elegant-h2020/cbmc.git ~/Elegant/CBMC
-cd ~/Elegant/CBMC
-git checkout cbmc-5.58.1
-```
-
-##### 2. Clone the service source:
+##### 1. Clone the service source:
 
 ```bash 
 cd ~/Elegant
