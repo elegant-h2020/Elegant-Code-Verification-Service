@@ -76,13 +76,15 @@ ENV SERVICE_HOME=/root/Elegant/Elegant-Code-Verification-Service
 ENV JAVA_HOME=/usr/lib/jvm/openjdk-8u222-b10
 ENV GLASSFISH_HOME=/glassfish6/glassfish/bin
 
-EXPOSE 8080
+# bring service files from host into container
+COPY . /root/Elegant/Elegant-Code-Verification-Service
 
-# enable rsync
-RUN sed -i 's/RSYNC_ENABLE=false/RSYNC_ENABLE=true/g' /etc/default/rsync
-# Setup rsync
-ADD ./rsyncd.conf /etc/rsyncd.conf
-
+# working directory
 WORKDIR $SERVICE_HOME
 
-CMD service rsync start && bash
+# build the sevice
+RUN mvn clean install
+
+EXPOSE 8080
+
+ENTRYPOINT ["./start-glassfish-server.sh"]

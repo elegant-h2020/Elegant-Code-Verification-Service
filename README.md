@@ -14,6 +14,20 @@ Code Verification Webservice.
 - CBMC v5.58.1
 - ESBMC v....
 
+## Service Deployment:
+
+## 1. Using Docker:
+
+```bash
+docker build -t code-verification-service-container .
+docker run -it -p 8080:8080 code-verification-service-container
+```
+
+[Link](DOCKER.md) to dockerfile readme (To be updated).
+
+## 2. Manual Installation:
+	
+
 ## Getting the source code
 
 The service expects the source code to be in the following tree:
