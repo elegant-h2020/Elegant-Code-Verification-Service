@@ -14,20 +14,6 @@ Code Verification Webservice.
 - CBMC v5.58.1
 - ESBMC v....
 
-## Service Deployment:
-
-## 1. Using Docker:
-
-```bash
-docker build -t code-verification-service-container .
-docker run -it -p 8080:8080 code-verification-service-container
-```
-
-[Link](DOCKER.md) to dockerfile readme (To be updated).
-
-## 2. Manual Installation:
-	
-
 ## Getting the source code
 
 The service expects the source code to be in the following tree:
@@ -43,9 +29,34 @@ To get the source code in this layout execute:
 
 ```bash
 mkdir ~/Elegant
+git clone git@github.com:elegant-h2020/Elegant-Code-Verification-Service.git ~/Elegant/Elegant-Code-Verification-Service
+```
+
+## Dockerized Installation:
+
+```bash
+cd ~/Elegant/Elegant-Coder-Verification-Service
+```
+Build the container:
+```bash
+docker build -t code-verification-service-container .
+```
+Run the container:
+```bash
+docker run -it -p 8080:8080 code-verification-service-container
+```
+
+##### Now you can Utilize the API ! (Jump [Here](UTILIZATION.md))
+NOTE: Use `0.0.0.0` instead of `localhost`!!
+
+[Link](DOCKER.md) to dockerfile readme (outdated).
+
+## Manual Installation:
+
+```bash
+cd ~/Elegant
 git clone https://github.com/diffblue/cbmc.git ~/Elegant/CBMC
 git clone https://github.com/esbmc/esbmc.git ~/Elegant/ESBMC_Project/esbmc
-git clone git@github.com:elegant-h2020/Elegant-Code-Verification-Service.git ~/Elegant/Elegant-Code-Verification-Service
 ```
 
 Checkout to specific versions of the tools:
@@ -63,9 +74,6 @@ Checkout to specific versions of the tools:
 	cd ~/Elegant/ESBMC_Project/esbmc
 	git checkout v7.0
 	```
-
-
-## Requirements
 
 ### 1. JDK 8
 
@@ -104,9 +112,7 @@ make
 sudo make install
 ```
 
-## Build and Install the Code Verification tools:
-
-### 1. CBMC
+### 4. CBMC
 
 1. Install the pre-required packages for CBMC:
 
@@ -137,7 +143,7 @@ sudo make install
 		make -C jbmc/src
 		```
 
-### 2. ESBMC
+### 5. ESBMC
 
 1. Install the pre-required packages and solvers (Boolector only) for ESBMC:
 
@@ -164,16 +170,14 @@ sudo make install
 	cmake --build . && ninja install
 	```
 
-## Service Installation
-
-### 1. Set Environment variables:
+### 6. Set Environment variables:
 ```bash
 export SERVICE_HOME=~/Elegant/Elegant-Code-Verification-Service
 export JAVA_HOME=/usr/lib/jvm/openjdk-8u222-b10
 export GLASSFISH_HOME=~/glassfish6/glassfish/bin
 ```
 
-### 2. Configure the project:
+### 7. Configure the project:
 
 Make sure that `JBMC_BIN` is properly set in `LinuxJBMC.setUpJBMCEnvironment()`in order to let the web service to utilize the JBMC tool:
 
@@ -182,7 +186,7 @@ Make sure that `JBMC_BIN` is properly set in `LinuxJBMC.setUpJBMCEnvironment()`i
 - CBMC built with Make:
 	- ```environment.put("JBMC_BIN", environment.get("WORKDIR") + "/jbmc/src/jbmc/jbmc");```
 
-### 3. Build the service:
+### 8. Build the service:
 
 Generates the war file in `~/Elegant/Elegant-Code-Verification-Service/target/`.
 ```bash
@@ -190,7 +194,7 @@ cd ~/Elegant/Elegant-Code-Verification-Service
 mvn clean install
 ```
 
-### 4. Set a GlassFish domain up:
+### 9. Set a GlassFish domain up:
 
 ```bash
 $GLASSFISH_HOME/asadmin start-domain domain1
@@ -202,7 +206,7 @@ $GLASSFISH_HOME/asadmin start-domain domain1
 	$GLASSFISH_HOME/asadmin stop-domain domain1
 	```
 
-### 5. Deploy the service:
+### 10. Deploy the service:
 
 ```bash
 $GLASSFISH_HOME/asadmin deploy <path/to/service/war>
@@ -212,99 +216,6 @@ $GLASSFISH_HOME/asadmin deploy <path/to/service/war>
 	```bash
 	$GLASSFISH_HOME/asadmin deploy $SERVICE_HOME/target/Elegant-Code-Verification-Service-1.0-SNAPSHOT.war
 	```
-
-### 6. Utilize the API
-
-1. Start and initialize the service
-
-	```bash
-	curl http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification
-	```
-
-2. Register a new  verification request:
-
-	###### The JBMC request JSON format:
-	```bash
-	{
-		"tool": "JBMC",
-		"className": "path.to.main",
-		"isMethod": true | false
-		"methodName": "fully.qualified.name:(arg types)return type"
-	}
-	```
-
-	###### The ESBMC request JSON format:
-	```bash
-	{
-		"tool": "ESBMC",
-		"fileName": "relative/path/to/c-or-cpp-file"
-	}
-	```
-
-	###### Using the `curl`:
-
-	```bash
-	curl -X POST -H "Content-Type: multipart/form-data" -F "file=@/path/to/code/file" -F "request=@/path/to/request/json/file" http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newEntry
-	```
-
-	###### Examples:
-
-	The example code files are under `examples/codes/`.
-	The example request files are under `examples/requests/`
-	
-	1. Verify the whole class (`my/petty/examples/Simple.java`) with JBMC :
-	
-	```bash
-	curl -X POST -H "Content-Type: multipart/form-data" -F "file=@examples/codes/java/my/petty/examples/Simple.class" -F "request=@examples/requests/jbmc/request-class.json" http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newEntry
-	```
-	
-	2. Verify the `void foo()` method with JBMC:
-	
-	```bash
-	curl -X POST -H "Content-Type: multipart/form-data" -F "file=@examples/codes/java/my/petty/examples/Simple.class" -F "request=@examples/requests/jbmc/request-method-1.json"  http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newEntry
-	```
-	
-	3. Verify the `boolean foo(String)` method with JBMC:
-	
-	```bash
-	curl -X POST -H "Content-Type: multipart/form-data" -F "file=@examples/codes/java/my/petty/examples/Simple.class" -F "request=@examples/requests/jbmc/request-method-2.json" http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newEntry
-	```
-
-	4. Verify the `examples/codes/c/ex1.c` with ESBMC:
-	
-	```bash
-	curl -X POST -H "Content-Type: multipart/form-data" -F "file=@examples/codes/c/ex1.c" -F "request=@examples/requests/esbmc/request-1.json" http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newEntry
-	```
-
-	5. Verify the `examples/codes/c/ex2.c` with ESBMC:
-	
-	```bash
-	curl -X POST -H "Content-Type: multipart/form-data" -F "file=@examples/codes/c/ex2.c" -F "request=@examples/requests/esbmc/request-2.json" http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newEntry
-	```
-
-	6. Verify the `examples/codes/c/ex3.c` with ESBMC:
-	
-	```bash
-	curl -X POST -H "Content-Type: multipart/form-data" -F "file=@examples/codes/c/ex3.c" -F "request=@examples/requests/esbmc/request-3.json" http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newEntry
-	```
-
-3. Get the verification outcome of an entry:
-
-	```bash
-	curl http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/getEntry?entryId=<ID>
-	```
-
-4. Remove an entry:
-
-	```bash
-	curl --request DELETE http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/removeEntry?entryId=<ID>
-	```
-
-5. List all known verification entries:
-
-```bash
-curl http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/getEntries
-```
 
 ## Licenses
 
