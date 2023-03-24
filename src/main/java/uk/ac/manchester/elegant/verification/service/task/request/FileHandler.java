@@ -1,8 +1,12 @@
 package uk.ac.manchester.elegant.verification.service.task.request;
 
-import jakarta.json.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
 import jakarta.ws.rs.WebApplicationException;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import uk.ac.manchester.elegant.verification.service.api.ElegantCodeVerificationService;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -64,5 +68,20 @@ public class FileHandler {
         } else {
             return null;
         }
+    }
+
+    public static File writeObjectToJsonFile(Object object, int id) {
+        String serviceUId = ElegantCodeVerificationService.getServiceUId();
+        // create a new File object
+        String filename = "/service/files/" + serviceUId + "_" + id + ".json";
+        File file = new File(filename);
+        try {
+            // write the object to the file
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.writeValue(file, object);
+        } catch (IOException ignored) {
+
+        }
+        return file;
     }
 }
