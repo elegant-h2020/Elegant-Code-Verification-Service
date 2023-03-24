@@ -14,6 +14,8 @@ import uk.ac.manchester.elegant.verification.service.task.ServiceThreadPoolExecu
 import uk.ac.manchester.elegant.verification.service.task.VerificationTask;
 
 import java.io.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -22,6 +24,11 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @Path("/verification")
 public class ElegantCodeVerificationService {
+
+    /**
+     * The unique id of the current execution of the service.
+     */
+    private static String serviceUId;
 
     /**
      * The unique id of a Task.
@@ -42,6 +49,7 @@ public class ElegantCodeVerificationService {
 
     // service initialization
     static {
+        setExecutionUId();
         verificationTasks = new VerificationTasks();
         uid = new AtomicLong(-1);
         blockingQueue = new LinkedBlockingQueue<Runnable>();
@@ -49,6 +57,19 @@ public class ElegantCodeVerificationService {
 
         // Start all core threads of the executor
         executor.prestartAllCoreThreads();
+    }
+
+    /**
+     * Set the unique id of the current execution of the service in the yyyyMMdd-HHmm format.
+     */
+    public static void setExecutionUId() {
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd-HHmm");
+        serviceUId = now.format(formatter);
+    }
+
+    public static String getServiceUId() {
+        return serviceUId;
     }
 
     public static VerificationTasks getVerificationTasks() {
