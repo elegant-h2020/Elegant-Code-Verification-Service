@@ -149,10 +149,11 @@ public class ElegantCodeVerificationService {
         VerificationTask task = verificationTasks.getTask(id);
 
         if (task != null) {
+            File file = FileHandler.writeObjectToJsonFile(task, id);
+
             return Response
-                    .status(Response.Status.OK)
-                    .entity(task)
-                    .type(MediaType.APPLICATION_JSON)
+                    .ok(file, MediaType.APPLICATION_OCTET_STREAM)
+                    .header("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"")
                     .build();
         } else {
             return Response

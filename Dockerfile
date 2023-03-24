@@ -79,6 +79,9 @@ ENV GLASSFISH_HOME=/glassfish6/glassfish/bin
 # bring service files from host into container
 COPY . /root/Elegant/Elegant-Code-Verification-Service
 
+# a directory to store the files produced by the service
+VOLUME /service/files
+
 # working directory
 WORKDIR $SERVICE_HOME
 
