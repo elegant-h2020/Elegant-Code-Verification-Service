@@ -3,8 +3,10 @@
 1. Start and initialize the service
 
 	```bash
-	curl http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification
+	curl http://0.0.0.0:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification
 	```
+ 
+> Notice that `0.0.0.0` is used as the service is running in a Docker container.
 
 2. Register a new  verification request:
 
@@ -76,17 +78,17 @@
 3. Get the verification outcome of an entry:
 
 	```bash
-	curl http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/getEntry?entryId=<ID>
+	curl http://0.0.0.0:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/getEntry?entryId=<ID>
 	```
 
 4. Remove an entry:
 
 	```bash
-	curl --request DELETE http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/removeEntry?entryId=<ID>
+	curl --request DELETE http://0.0.0.0:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/removeEntry?entryId=<ID>
 	```
 
 5. List all known verification entries:
 
 ```bash
-curl http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/getEntries
+curl http://0.0.0.0:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/getEntries
 ```

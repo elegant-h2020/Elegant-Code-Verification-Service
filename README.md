@@ -1,10 +1,16 @@
 # ELEGANT Code Verification Service
 
-A web service that ...
+A web service that employs the [ESBMC](https://github.com/elegant-h2020/esbmc "ESBMC") and [JBMC](https://github.com/elegant-h2020/cbmc "JBMC") verification tools to verify C/C++ and Java code.
+
+> *This product includes software developed by Daniel Kroening,
+Edmund Clarke,
+Computer Science Department, University of Oxford
+Computer Science Department, Carnegie Mellon University*Computer Science Department, Carnegie Mellon University*
+
 
 ## Description
 
-This project aims to build a RESTful API in Java that can submit requests for ...
+This project aims to build a RESTful API in Java that can submit verification requests on the ESBMC and JBMC tools for C/C++ and Java codes. 
 
 The project uses Jakarta EE 9 and Eclipse GlassFish 6 to implement a portable API for the development, exposure, and accessing of the ELEGANT
 Code Verification Webservice.
@@ -12,7 +18,7 @@ Code Verification Webservice.
 ## Dependencies
 
 - CBMC v5.58.1
-- ESBMC v....
+- ESBMC v7.0
 
 ## Getting the source code
 
@@ -51,12 +57,11 @@ docker run -it -p 8080:8080 -v service_files:/service/files code-verification-se
 ```
 
 ##### Now you can [Utilize the API](UTILIZATION.md) !
-NOTE: Use `0.0.0.0` instead of `localhost`!!
 
 
 ## Licenses
 
-(TODO)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 ## Additional Resources
 
