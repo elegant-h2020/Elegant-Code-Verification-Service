@@ -41,7 +41,7 @@ git clone git@github.com:elegant-h2020/Elegant-Code-Verification-Service.git ~/E
 ## Dockerized Installation:
 
 ```bash
-cd ~/Elegant/Elegant-Coder-Verification-Service
+cd ~/Elegant/Elegant-Code-Verification-Service
 ```
 Create a Docker Volume:
 ```bash
