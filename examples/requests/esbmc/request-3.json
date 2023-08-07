@@ -1,4 +1,6 @@
 {
 	"tool" : "ESBMC",
-	"fileName": "ex3.c"
+	"fileName": "ex3.c",
+	"isFunction": false,
+	"functionName": "null"
 }

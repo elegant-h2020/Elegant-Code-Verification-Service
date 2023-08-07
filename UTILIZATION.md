@@ -25,6 +25,8 @@
 	{
 		"tool": "ESBMC",
 		"fileName": "relative/path/to/c-or-cpp-file"
+		"isFunction": true | false
+		"functionName:" "name"
 	}
 	```
 
@@ -91,4 +93,12 @@
 
 ```bash
 curl http://0.0.0.0:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/getEntries
+```
+
+###### Tested Use Cases:
+
+1. NES Example (examples/codes/c/NES-example.cpp):
+
+```bash
+curl -X POST -H "Content-Type: multipart/form-data" -F "file=@examples/codes/c/ex3.c" -F "request=@examples/requests/esbmc/NES-request.json" http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newEntry
 ```
