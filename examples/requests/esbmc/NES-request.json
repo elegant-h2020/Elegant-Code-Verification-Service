@@ -1,0 +1,6 @@
+{
+	"tool" : "ESBMC",
+	"fileName": "NES-example.cpp",
+	"isFunction": true,
+	"functionName": "execute"
+}
