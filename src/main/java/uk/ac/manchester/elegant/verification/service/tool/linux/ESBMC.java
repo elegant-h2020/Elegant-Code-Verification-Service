@@ -33,9 +33,9 @@ public class ESBMC implements VerificationTool {
     public void setUpToolEnvironment() {
         environment = esbmcProcessBuilder.environment();
 
-        environment.put("PATH_TO_ESBMC", "/Elegant/ESBMC_Project");
+        environment.put("PATH_TO_ESBMC", "/Elegant/ESBMC_Linux");
         environment.put("WORKDIR", System.getProperty("user.home") + environment.get("PATH_TO_ESBMC"));
-        environment.put("ESBMC_BIN", environment.get("WORKDIR") + "/release/bin/esbmc");
+        environment.put("ESBMC_BIN", environment.get("WORKDIR") + "/bin/esbmc");
         environment.put("SERVICE_DIR", System.getProperty("user.home") + "/Elegant/Elegant-Code-Verification-Service");
         environment.put("EXAMPLE_CODES", environment.get("SERVICE_DIR") + "/examples/codes/c");
         environment.put("UPLOADED_FILES", environment.get("SERVICE_DIR") + "/uploaded");
