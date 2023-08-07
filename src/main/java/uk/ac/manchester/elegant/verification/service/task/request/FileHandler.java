@@ -82,8 +82,10 @@ public class FileHandler {
 
         } else if (tool.equals("ESBMC")) {
             final String fileName = jsonObject.getString("fileName");
+            final boolean isFunction = jsonObject.getBoolean("isFunction");
+            final String functionName = jsonObject.getString("functionName");
 
-            return new ESBMCRequest(fileName);
+            return new ESBMCRequest(fileName, isFunction, functionName);
 
         } else {
             return null;

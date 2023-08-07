@@ -70,14 +70,25 @@ public class ESBMC implements VerificationTool {
         args.add("10g");
     }
 
+    /**
+     * Set ESBMC run configuration as follows:
+     * ./esbmc example.cpp --cppstd 14 --function execute --incremental-bmc --compact-trace
+     */
     public String[] commandArgs(ESBMCRequest code) {
         ArrayList<String> args = new ArrayList<>();
         args.add(environment.get("ESBMC_BIN"));
         final String file = environment.get("UPLOADED_FILES") + "/" + code.getFileName();
         args.add(file);
+        args.add("--cppstd");
+        args.add("14");
+        if (code.isFunction()) {
+            final String method = code.getFunctionName();
+            args.add("--function");
+            args.add(method);
+        }
+        args.add("--incremental-bmc");
+        args.add("--compact-trace");
         String[] strArray = new String[args.size()];
-        // TODO: customize options ?
-        addOptions(args);
         return args.toArray(strArray);
     }
 

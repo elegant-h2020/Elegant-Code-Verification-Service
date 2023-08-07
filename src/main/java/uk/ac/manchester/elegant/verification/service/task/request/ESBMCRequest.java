@@ -23,9 +23,13 @@ package uk.ac.manchester.elegant.verification.service.task.request;
 public class ESBMCRequest implements Request{
 
     private String fileName;
+    private boolean isFunction;
+    private String functionName;
 
-    public ESBMCRequest(String fileName) {
+    public ESBMCRequest(String fileName, boolean isFunction, String functionName) {
         this.fileName = fileName;
+        this.isFunction = isFunction;
+        this.functionName = functionName;
     }
 
     public static ESBMCRequest asESBMCRequest(Request request) {
@@ -36,14 +40,32 @@ public class ESBMCRequest implements Request{
         return fileName;
     }
 
+    public boolean isFunction() {
+        return isFunction;
+    }
+
+    public String getFunctionName() {
+        return functionName;
+    }
+
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
 
+    public void setIsFunction(boolean isMethod) {
+        this.isFunction = isMethod;
+    }
+
+    public void setFunction(String functionName) {
+        this.functionName = functionName;
+    }
+
     @Override
     public String toString() {
-        return "ESBMCRequest{"           +
-                ", fileName = \""   + fileName    + "\"" +
+        return "ESBMCRequest{"          +
+                ", fileName = \""       + fileName      + "\"" +
+                ", isFunction = "       + isFunction    +
+                ", functionName = \""   + functionName  + "\"" +
                 "}";
     }
 }
