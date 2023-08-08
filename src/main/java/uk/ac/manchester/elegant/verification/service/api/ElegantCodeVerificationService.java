@@ -123,7 +123,10 @@ public class ElegantCodeVerificationService {
         final boolean accepted = blockingQueue.offer(new VerificationTask(entryId, tool, request));
         if (!accepted) {
             // no space is currently available for the task
-            // TODO: handle this case
+            return Response.status(Response.Status.TOO_MANY_REQUESTS)
+                    .type(MediaType.TEXT_PLAIN_TYPE)
+                    .entity("Overloaded! The service currently unable to accept more requests.")
+                    .build();
         }
 
         return Response.status(Response.Status.ACCEPTED)
