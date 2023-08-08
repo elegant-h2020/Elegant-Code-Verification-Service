@@ -40,7 +40,7 @@ public class FileHandler {
      * @param fileInputStream
      * @param fileMetaData
      */
-    public static void receiveFile(InputStream fileInputStream, FormDataContentDisposition fileMetaData) {
+    public static boolean receiveFile(InputStream fileInputStream, FormDataContentDisposition fileMetaData) {
         try {
             int read = 0;
             byte[] bytes = new byte[1024];
@@ -51,8 +51,11 @@ public class FileHandler {
             }
             out.flush();
             out.close();
+
+            return true;
         } catch (IOException e) {
-            throw new WebApplicationException("Error while uploading file. Please try again !!");
+            //throw new WebApplicationException("Error while uploading file. Please try again !!");
+            return false;
         }
     }
 
