@@ -27,6 +27,7 @@ package uk.ac.manchester.elegant.verification.service.task.request;
 public class JBMCRequest implements Request{
 
     private String className;
+    private String relativeClassPath;
     private boolean isMethod;
     // Fully qualified name of a method.
     private String methodName;
@@ -35,6 +36,12 @@ public class JBMCRequest implements Request{
         this.className = className;
         this.isMethod = isMethod;
         this.methodName = methodName;
+        this.relativeClassPath = resolveRelativeClassPath(className);
+    }
+
+    private String resolveRelativeClassPath(String className) {
+        String classNameWithFileSeparator = className.replace(".", "/");
+        return classNameWithFileSeparator.substring(0, classNameWithFileSeparator.lastIndexOf("/"));
     }
 
     public static JBMCRequest asJBMCRequest(Request request) {
@@ -53,6 +60,8 @@ public class JBMCRequest implements Request{
         return methodName;
     }
 
+    public String getRelativeClassPath() { return relativeClassPath; }
+
     public void setClassName(String classname) {
         this.className = classname;
     }
@@ -63,6 +72,10 @@ public class JBMCRequest implements Request{
 
     public void setMethodName(String methodName) {
         this.methodName = methodName;
+    }
+
+    public void setRelativeClassPath(String relativeClassPath) {
+        this.relativeClassPath = relativeClassPath;
     }
 
     @Override

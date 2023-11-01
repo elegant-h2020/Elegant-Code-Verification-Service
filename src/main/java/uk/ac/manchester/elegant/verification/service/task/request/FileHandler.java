@@ -40,12 +40,21 @@ public class FileHandler {
      * @param fileInputStream
      * @param fileMetaData
      */
-    public static boolean receiveFile(InputStream fileInputStream, FormDataContentDisposition fileMetaData) {
+    public static boolean receiveFile(InputStream fileInputStream, FormDataContentDisposition fileMetaData, Request request) {
         try {
             int read = 0;
             byte[] bytes = new byte[1024];
+            String relativeClassPath = null;
+            File file = null;
+            if (request instanceof JBMCRequest) {
+                relativeClassPath = ((JBMCRequest) request).getRelativeClassPath();
+                resolveDirectory(UPLOAD_PATH + relativeClassPath);
+                file = new File((UPLOAD_PATH + relativeClassPath + File.separator + fileMetaData.getFileName()));
+            } else {
+                file = new File(UPLOAD_PATH + fileMetaData.getFileName());
+            }
 
-            OutputStream out = Files.newOutputStream(new File(UPLOAD_PATH + fileMetaData.getFileName()).toPath());
+            OutputStream out = Files.newOutputStream(file.toPath());
             while ((read = fileInputStream.read(bytes)) != -1) {
                 out.write(bytes, 0, read);
             }
@@ -56,6 +65,13 @@ public class FileHandler {
         } catch (IOException e) {
             //throw new WebApplicationException("Error while uploading file. Please try again !!");
             return false;
+        }
+    }
+
+    private static void resolveDirectory(String filePathName) {
+        File idDirectory = new File(filePathName);
+        if (!idDirectory.exists()) {
+            idDirectory.mkdirs();
         }
     }
 

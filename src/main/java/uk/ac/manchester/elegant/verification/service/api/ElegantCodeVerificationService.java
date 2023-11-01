@@ -142,14 +142,13 @@ public class ElegantCodeVerificationService {
     public Response submit(@FormDataParam("file") InputStream fileInputStream,
                            @FormDataParam("file") FormDataContentDisposition fileMetaData,
                            @FormDataParam("request") InputStream requestInputStream) {
-
-        if (!FileHandler.receiveFile(fileInputStream, fileMetaData)) {
+        Request request = FileHandler.receiveRequest(requestInputStream);
+        if (!FileHandler.receiveFile(fileInputStream, fileMetaData, request)) {
             return Response.status(Response.Status.UNSUPPORTED_MEDIA_TYPE)
                     .type(MediaType.TEXT_PLAIN_TYPE)
                     .entity("Input file error!")
                     .build();
         }
-        Request request = FileHandler.receiveRequest(requestInputStream);
 
         if (request instanceof JBMCRequest) {
             return handle(request, "JBMC");
