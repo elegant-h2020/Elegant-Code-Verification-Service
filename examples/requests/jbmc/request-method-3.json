@@ -1,8 +1,8 @@
 {
 	"tool" : "JBMC",
-	"isJarFile" : false,
-	"jarName" : "",
+	"isJarFile" : true,
+	"jarName" : "simple.jar",
 	"className": "my.petty.examples.Simple",
-	"isMethod": false,
+	"isMethod": true,
 	"methodName": "my.petty.examples.Simple.foo:(Ljava/lang/String;)Z"
 }
