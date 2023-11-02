@@ -64,8 +64,11 @@
     4. Upload a jar file (`my/petty/examples/simple.jar`) and verify the `boolean foo(String)` method from a class that is in a jar file with JBMC:
 
     ```bash
-    jar -cvf examples/codes/java/my/petty/examples/simple.jar examples/codes/java/my/petty/examples/Simple.class
-    curl -X POST -H "Content-Type: multipart/form-data" -F "file=@examples/codes/java/my/petty/examples/simple.jar" -F "request=@examples/requests/jbmc/request-method-3.json" http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newEntry
+    cd examples/codes/java
+    javac my/petty/examples/Simple.java
+    jar -cvf simple.jar my/petty/examples
+    cd ../../../
+    curl -X POST -H "Content-Type: multipart/form-data" -F "file=@examples/codes/java/simple.jar" -F "request=@examples/requests/jbmc/request-method-3.json" http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newEntry
     ```
 
 	5. Verify the `examples/codes/c/ex1.c` with ESBMC:
