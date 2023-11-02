@@ -64,7 +64,13 @@ public class JBMC implements VerificationTool {
         args.add(environment.get("CLASSPATH"));
         if (code.isJarFile()) {
             args.add("-jar");
-            args.add(environment.get("UPLOADED_FILES") + File.separator + code.getJarName());
+            String jarFullPath = null;
+            if (code.getRelativeClassPath() != null) {
+                jarFullPath = environment.get("UPLOADED_FILES") + File.separator + code.getRelativeClassPath() + File.separator + code.getJarName();
+            } else {
+                jarFullPath = environment.get("UPLOADED_FILES") + File.separator + code.getJarName();
+            }
+            args.add(jarFullPath);
         }
         if (code.isMethod()) {
             final String method = code.getMethodName();
