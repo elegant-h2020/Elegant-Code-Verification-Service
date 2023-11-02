@@ -1,0 +1,8 @@
+{
+	"tool" : "JBMC",
+	"isJarFile" : true,
+	"jarName" : "nes-operator.jar",
+	"className": "my.petty.examples.NesOperator",
+	"isMethod": true,
+	"methodName": "my.petty.examples.NesOperator.flatMap:Lmy/petty/examples/NesOperator$Input;)Ljava/util/Collection"
+}
