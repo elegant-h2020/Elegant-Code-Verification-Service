@@ -28,12 +28,16 @@ public class JBMCRequest implements Request{
 
     private String className;
     private String relativeClassPath;
+    private boolean isJarFile;
+    private String jarName;
     private boolean isMethod;
     // Fully qualified name of a method.
     private String methodName;
 
-    public JBMCRequest(String className, boolean isMethod, String methodName) {
+    public JBMCRequest(String className, boolean isJarFile, String jarName, boolean isMethod, String methodName) {
         this.className = className;
+        this.isJarFile = isJarFile;
+        this.jarName = jarName;
         this.isMethod = isMethod;
         this.methodName = methodName;
         this.relativeClassPath = resolveRelativeClassPath(className);
@@ -41,7 +45,11 @@ public class JBMCRequest implements Request{
 
     private String resolveRelativeClassPath(String className) {
         String classNameWithFileSeparator = className.replace(".", "/");
-        return classNameWithFileSeparator.substring(0, classNameWithFileSeparator.lastIndexOf("/"));
+        if (classNameWithFileSeparator.lastIndexOf("/") != -1) {
+            return classNameWithFileSeparator.substring(0, classNameWithFileSeparator.lastIndexOf("/"));
+        } else {
+            return null;
+        }
     }
 
     public static JBMCRequest asJBMCRequest(Request request) {
@@ -50,6 +58,14 @@ public class JBMCRequest implements Request{
 
     public String getClassName() {
         return className;
+    }
+
+    public boolean isJarFile() {
+        return isJarFile;
+    }
+
+    public String getJarName() {
+        return jarName;
     }
 
     public boolean isMethod() {
@@ -64,6 +80,13 @@ public class JBMCRequest implements Request{
 
     public void setClassName(String classname) {
         this.className = classname;
+    }
+    public void setIsJarFile(boolean isJarFile) {
+        this.isJarFile = isJarFile;
+    }
+
+    public void setJarName(String jarName) {
+        this.jarName = jarName;
     }
 
     public void setIsMethod(boolean isMethod) {
@@ -82,6 +105,8 @@ public class JBMCRequest implements Request{
     public String toString() {
         return "JBMCRequest{" +
                 ", className = \""    + className     + "\"" +
+                ", isJarFile = \""    + isJarFile     +
+                ", jarName = \""      + jarName       + "\"" +
                 ", isMethod = "       + isMethod      +
                 ", methodName = \""   + methodName    + "\"" +
                 "}";

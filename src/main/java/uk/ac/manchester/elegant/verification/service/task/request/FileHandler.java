@@ -48,8 +48,13 @@ public class FileHandler {
             File file = null;
             if (request instanceof JBMCRequest) {
                 relativeClassPath = ((JBMCRequest) request).getRelativeClassPath();
-                resolveDirectory(UPLOAD_PATH + relativeClassPath);
-                file = new File((UPLOAD_PATH + relativeClassPath + File.separator + fileMetaData.getFileName()));
+                if (relativeClassPath != null) {
+                    relativeClassPath = UPLOAD_PATH + relativeClassPath;
+                } else {
+                    relativeClassPath = UPLOAD_PATH;
+                }
+                resolveDirectory(relativeClassPath);
+                file = new File((relativeClassPath + File.separator + fileMetaData.getFileName()));
             } else {
                 file = new File(UPLOAD_PATH + fileMetaData.getFileName());
             }
@@ -94,10 +99,12 @@ public class FileHandler {
 
         if (tool.equals("JBMC")) {
             final String className = jsonObject.getString("className");
+            final boolean isJarFile = jsonObject.getBoolean("isJarFile");
+            final String jarName = jsonObject.getString("jarName");
             final boolean isMethod = jsonObject.getBoolean("isMethod");
             final String methodName = jsonObject.getString("methodName");
 
-            return new JBMCRequest(className, isMethod, methodName);
+            return new JBMCRequest(className, isJarFile, jarName, isMethod, methodName);
 
         } else if (tool.equals("ESBMC")) {
             final String fileName = jsonObject.getString("fileName");
