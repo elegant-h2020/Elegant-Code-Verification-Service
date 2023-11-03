@@ -52,7 +52,7 @@ public class JBMC implements VerificationTool {
         environment.put("SERVICE_DIR", System.getProperty("user.home") + "/Elegant/Elegant-Code-Verification-Service");
         //String testCasesPath = System.getProperty("user.home") + "/Elegant/Elegant-Code-Verification-Service/test-cases";
         environment.put("UPLOADED_FILES", environment.get("SERVICE_DIR") + "/uploaded");
-        environment.put("CLASSPATH", environment.get("JAVA_MODEL") + ":" + ":" + environment.get("UPLOADED_FILES"));
+        environment.put("CLASSPATH", environment.get("JAVA_MODEL") + ":" + environment.get("UPLOADED_FILES"));
         environment.put("OUTPUT", environment.get("SERVICE_DIR") + "/output");
     }
 
