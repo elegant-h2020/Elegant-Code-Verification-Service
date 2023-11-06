@@ -14,7 +14,9 @@
 	```bash
 	{
 		"tool": "JBMC",
-		"className": "path.to.main",
+		"isJarFile" : true | false,
+		"jarName" : "file.jar", # Name of the jar file that is uploaded
+		"className": "package.ClassName", # Path of the class that contains the main
 		"isMethod": true | false
 		"methodName": "fully.qualified.name:(arg types)return type"
 	}
@@ -41,37 +43,47 @@
 	The example code files are under `examples/codes/`.
 	The example request files are under `examples/requests/`
 	
-	1. Verify the whole class (`my/petty/examples/Simple.java`) with JBMC :
+	1. Upload a class file (`my/petty/examples/Simple.class`) and verify the whole class with JBMC :
 	
 	```bash
 	curl -X POST -H "Content-Type: multipart/form-data" -F "file=@examples/codes/java/my/petty/examples/Simple.class" -F "request=@examples/requests/jbmc/request-class.json" http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newEntry
 	```
 	
-	2. Verify the `void foo()` method with JBMC:
+	2. Upload a class file (`my/petty/examples/Simple.class`) and verify the `void foo()` method with JBMC:
 	
 	```bash
 	curl -X POST -H "Content-Type: multipart/form-data" -F "file=@examples/codes/java/my/petty/examples/Simple.class" -F "request=@examples/requests/jbmc/request-method-1.json"  http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newEntry
 	```
 	
-	3. Verify the `boolean foo(String)` method with JBMC:
+	3. Upload a class file (`my/petty/examples/Simple.class`) and verify the `boolean foo(String)` method with JBMC:
 	
 	```bash
 	curl -X POST -H "Content-Type: multipart/form-data" -F "file=@examples/codes/java/my/petty/examples/Simple.class" -F "request=@examples/requests/jbmc/request-method-2.json" http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newEntry
 	```
 
-	4. Verify the `examples/codes/c/ex1.c` with ESBMC:
+    4. Upload a jar file (`my/petty/examples/simple.jar`) and verify the `boolean foo(String)` method from a class that is in a jar file with JBMC:
+
+    ```bash
+    cd examples/codes/java
+    javac my/petty/examples/Simple.java
+    jar -cvf simple.jar my/petty/examples
+    cd ../../../
+    curl -X POST -H "Content-Type: multipart/form-data" -F "file=@examples/codes/java/simple.jar" -F "request=@examples/requests/jbmc/request-method-3.json" http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newEntry
+    ```
+
+	5. Verify the `examples/codes/c/ex1.c` with ESBMC:
 	
 	```bash
 	curl -X POST -H "Content-Type: multipart/form-data" -F "file=@examples/codes/c/ex1.c" -F "request=@examples/requests/esbmc/request-1.json" http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newEntry
 	```
 
-	5. Verify the `examples/codes/c/ex2.c` with ESBMC:
+	6. Verify the `examples/codes/c/ex2.c` with ESBMC:
 	
 	```bash
 	curl -X POST -H "Content-Type: multipart/form-data" -F "file=@examples/codes/c/ex2.c" -F "request=@examples/requests/esbmc/request-2.json" http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newEntry
 	```
 
-	6. Verify the `examples/codes/c/ex3.c` with ESBMC:
+	7. Verify the `examples/codes/c/ex3.c` with ESBMC:
 	
 	```bash
 	curl -X POST -H "Content-Type: multipart/form-data" -F "file=@examples/codes/c/ex3.c" -F "request=@examples/requests/esbmc/request-3.json" http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newEntry

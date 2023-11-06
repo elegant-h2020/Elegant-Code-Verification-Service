@@ -51,9 +51,8 @@ public class JBMC implements VerificationTool {
         environment.put("JAVA_MODEL", environment.get("WORKDIR") + "/jbmc/lib/java-models-library/target/core-models.jar");
         environment.put("SERVICE_DIR", System.getProperty("user.home") + "/Elegant/Elegant-Code-Verification-Service");
         //String testCasesPath = System.getProperty("user.home") + "/Elegant/Elegant-Code-Verification-Service/test-cases";
-        environment.put("EXAMPLE_CODES", environment.get("SERVICE_DIR") + "/examples/codes/java");
         environment.put("UPLOADED_FILES", environment.get("SERVICE_DIR") + "/uploaded");
-        environment.put("CLASSPATH", environment.get("JAVA_MODEL") + ":" + environment.get("EXAMPLE_CODES") + ":" + environment.get("UPLOADED_FILES"));
+        environment.put("CLASSPATH", environment.get("JAVA_MODEL") + ":" + environment.get("UPLOADED_FILES"));
         environment.put("OUTPUT", environment.get("SERVICE_DIR") + "/output");
     }
 
@@ -63,10 +62,23 @@ public class JBMC implements VerificationTool {
         args.add("--json-ui");
         args.add("--classpath");
         args.add(environment.get("CLASSPATH"));
+        if (code.isJarFile()) {
+            args.add("-jar");
+            String jarFullPath = null;
+            if (code.getRelativeClassPath() != null) {
+                jarFullPath = environment.get("UPLOADED_FILES") + File.separator + code.getRelativeClassPath() + File.separator + code.getJarName();
+            } else {
+                jarFullPath = environment.get("UPLOADED_FILES") + File.separator + code.getJarName();
+            }
+            args.add(jarFullPath);
+        }
         if (code.isMethod()) {
             final String method = code.getMethodName();
             args.add("--function");
             args.add(method);
+        }
+        if (code.isJarFile()) {
+            args.add("--main-class");
         }
         final String klass = code.getClassName();
         args.add(klass);
