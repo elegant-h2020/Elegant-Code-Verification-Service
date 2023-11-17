@@ -71,6 +71,15 @@
     curl -X POST -H "Content-Type: multipart/form-data" -F "file=@examples/codes/java/simple.jar" -F "request=@examples/requests/jbmc/request-method-3.json" http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newEntry
     ```
 
+    4.1 Upload a jar file (`radioProfilerCluster.jar`) and verify the whole class described in the `request-class-radio-profiler.json` with JBMC:
+    ```bash
+    cd examples/codes/java/
+    export SERVICE_HOME=~/Elegant/Elegant-Code-Verification-Service
+    javac -classpath $SERVICE_HOME/nebulastream/nebulastream-java-client-0.0.83.jar stream/nebula/examples/radioProfilerCluster.java 
+    jar -cvf radioProfilerCluster.jar stream/nebula/examples
+    curl -X POST -H "Content-Type: multipart/form-data" -F "file=@examples/codes/java/radioProfilerCluster.jar" -F "request=@examples/requests/jbmc/request-class-radio-profiler-cluster.json" http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newEntry
+    ```
+
 	5. Verify the `examples/codes/c/ex1.c` with ESBMC:
 	
 	```bash
