@@ -40,6 +40,16 @@ git clone git@github.com:elegant-h2020/Elegant-Code-Verification-Service.git ~/E
 
 ## Dockerized Installation:
 
+You can pull the dockerized container from DockerHub, or build it locally.
+
+### 1. Pull the image from Docker Hub
+The docker image is uploaded in [docker hub](https://hub.docker.com/repository/docker/beehivelab/code-verification-service-container). So you can pull the image:
+```bash
+docker pull beehivelab/code-verification-service-container:latest
+```
+
+### 2. Build the image locally
+
 ```bash
 cd ~/Elegant/Elegant-Code-Verification-Service
 ```
@@ -56,7 +66,7 @@ Run the container:
 docker run -it -p 8080:8080 -v service_files:/service/files code-verification-service-container
 ```
 
-##### Now you can [Utilize the API](UTILIZATION.md) !
+## Now you can try the [examples](UTILIZATION.md) !
 
 
 ## Licenses
