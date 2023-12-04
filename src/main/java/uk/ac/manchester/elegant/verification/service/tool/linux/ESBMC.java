@@ -88,6 +88,7 @@ public class ESBMC implements VerificationTool {
         }
         args.add("--incremental-bmc");
         args.add("--compact-trace");
+        args.add("--no-pointer-check");
         String[] strArray = new String[args.size()];
         return args.toArray(strArray);
     }
