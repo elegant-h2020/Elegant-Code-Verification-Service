@@ -5,7 +5,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-    build-essential g++ gcc flex bison make git curl patch maven jq rsync wget unzip \
+    build-essential tree g++ gcc flex bison make git curl patch maven jq rsync wget unzip \
     && apt-get clean
 
 # Java 8 u222
