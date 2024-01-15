@@ -123,8 +123,8 @@ curl http://0.0.0.0:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/veri
 
 ###### Tested Use Cases:
 
-1. NES Example (examples/codes/c/NES-example.cpp):
+1. NES Example (examples/codes/cpp/NES-example.cpp):
 
 ```bash
-curl -X POST -H "Content-Type: multipart/form-data" -F "file=@examples/codes/c/NES-example.cpp" -F "request=@examples/requests/esbmc/NES-request.json" http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newEntry
+curl -X POST -H "Content-Type: multipart/form-data" -F "file=@examples/codes/cpp/NES-example.cpp" -F "request=@examples/requests/esbmc/NES-request.json" http://localhost:8080/Elegant-Code-Verification-Service-1.0-SNAPSHOT/api/verification/newEntry
 ```
