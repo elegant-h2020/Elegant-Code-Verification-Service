@@ -6,6 +6,7 @@ import uk.ac.manchester.elegant.verification.service.tool.VerificationTool;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 
 public class ESBMC implements VerificationTool {
@@ -64,6 +65,9 @@ public class ESBMC implements VerificationTool {
         args.add("--no-slice");
         args.add("--interval-analysis");
         args.add("--incremental-bmc");
+        args.add("--unlimited-k-steps");
+        args.add("--k-induction");
+        args.add("--falsification");
         args.add("--timeout");
         args.add("878s");
         args.add("--memlimit");
@@ -89,6 +93,9 @@ public class ESBMC implements VerificationTool {
         args.add("--incremental-bmc");
         args.add("--compact-trace");
         args.add("--no-pointer-check");
+        args.add("--unlimited-k-steps");
+        args.add("--k-induction");
+        args.add("--falsification");
         String[] strArray = new String[args.size()];
         return args.toArray(strArray);
     }
