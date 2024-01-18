@@ -163,6 +163,27 @@ public class ElegantCodeVerificationService {
 
     }
 
+    /**
+     * Get the status of an entry.
+     */
+    @GET
+    @Path("getStatus")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getStatus(@QueryParam("entryId") String entryId) {
+        int id = Integer.parseInt(entryId);
+        VerificationTask task = verificationTasks.getTask(id);
+        if (task != null) {
+            return Response
+                    .status(Response.Status.ACCEPTED)
+                    .entity(task.getStatus())
+                    .build();
+        } else {
+            return Response
+                    .status(Response.Status.ACCEPTED)
+                    .entity("Invalid Entry!")
+                    .build();
+        }
+    }
 
     /**
      * Get the verification outcome of an entry.
