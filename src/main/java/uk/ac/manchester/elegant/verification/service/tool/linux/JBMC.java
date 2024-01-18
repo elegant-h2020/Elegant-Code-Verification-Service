@@ -94,7 +94,7 @@ public class JBMC implements VerificationTool {
      * @param code is the main class of the program to be verified.
      */
     @Override
-    public void verifyCode(Request code) throws IOException {
+    public void verifyCode(long id, Request code) throws IOException {
         jbmcProcessBuilder.command(commandArgs(JBMCRequest.asJBMCRequest(code)));
         this.jbmcProcess = jbmcProcessBuilder.start();
     }

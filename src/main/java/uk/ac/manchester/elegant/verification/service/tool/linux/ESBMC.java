@@ -90,56 +90,37 @@ public class ESBMC implements VerificationTool {
             args.add("--function");
             args.add(method);
         }
-        args.add("--incremental-bmc");
-        args.add("--compact-trace");
+//        args.add("--incremental-bmc");
+//        args.add("--compact-trace");
         args.add("--no-pointer-check");
         args.add("--unlimited-k-steps");
-        args.add("--k-induction");
-        args.add("--falsification");
         String[] strArray = new String[args.size()];
         return args.toArray(strArray);
     }
 
     /**
-     * Starts a Linux ESBMC process to verify a C/C++ program.
+     * Starts a Linux ESBMC process to verify a C/C++ program. Writes the output in a file stored in: environment.get("OUTPUT") + File.separator + taskId + File.separator + "output.log".
      * @param code is the file of the program to be verified.
      */
     @Override
-    public void verifyCode(Request code) throws IOException {
+    public void verifyCode(long taskId, Request code) throws IOException {
+        File idDirectory = new File(environment.get("OUTPUT") + File.separator + taskId);
+        if (!idDirectory.exists()) {
+            idDirectory.mkdirs();
+        }
+        File outputFile = new File( environment.get("OUTPUT") + File.separator + taskId + File.separator + "output.log");
+        esbmcProcessBuilder.redirectOutput(outputFile);
         esbmcProcessBuilder.command(commandArgs(ESBMCRequest.asESBMCRequest(code)));
         this.esbmcProcess = esbmcProcessBuilder.start();
     }
 
     /**
      * ESBMC does not export output in JSON format.
-     * @return an ugly String representation of the ESBMC output.
+     * @return null.
      */
     @Override
     public Object readOutput() {
-        StringBuilder sb = new StringBuilder();
-
-        String line;
-        try {
-            BufferedReader processOutputReader = new BufferedReader(new InputStreamReader(this.esbmcProcess.getInputStream()));
-            sb.append("<InputStream>");
-            while ((line = processOutputReader.readLine()) != null) {
-                System.out.println("line = " + line);
-                sb.append(line + System.lineSeparator());
-            }
-            sb.append("<InputStream>");
-
-            BufferedReader processOutputReader2 = new BufferedReader(new InputStreamReader(this.esbmcProcess.getErrorStream()));
-            sb.append("<ErrorStream>");
-            while ((line = processOutputReader2.readLine()) != null) {
-                sb.append(line + System.lineSeparator());
-            }
-            sb.append("<ErrorStream>");
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        return sb.substring(0, sb.length() - 1);
+        return null;
     }
 
     @Override

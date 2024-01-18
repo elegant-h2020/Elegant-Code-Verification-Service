@@ -27,6 +27,9 @@ import jakarta.json.JsonReader;
 import jakarta.ws.rs.WebApplicationException;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import uk.ac.manchester.elegant.verification.service.api.ElegantCodeVerificationService;
+import uk.ac.manchester.elegant.verification.service.task.VerificationTask;
+import uk.ac.manchester.elegant.verification.service.tool.linux.ESBMC;
+import uk.ac.manchester.elegant.verification.service.tool.linux.JBMC;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -118,18 +121,26 @@ public class FileHandler {
         }
     }
 
-    public static File writeObjectToJsonFile(Object object, int id) {
+    public static File writeObjectToJsonFile(VerificationTask verificationTask, int id) {
         String serviceUId = ElegantCodeVerificationService.getServiceUId();
         // create a new File object
-        String filename = "/service/files/" + serviceUId + "_" + id + ".json";
-        File file = new File(filename);
-        try {
-            // write the object to the file
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.writeValue(file, object);
-        } catch (IOException ignored) {
+        File file = null;
+        if (verificationTask.getVerificationTool() instanceof ESBMC) {
+            file = new File(verificationTask.getVerificationTool().getEnvironmentVariable("OUTPUT") + File.separator + id + File.separator + "output.log");
+        } else if (verificationTask.getVerificationTool() instanceof JBMC) {
+            String filename = "/service/files/" + serviceUId + "_" + id + ".json";
+            file = new File(filename);
+            try {
+                // write the object to the file
+                ObjectMapper mapper = new ObjectMapper();
+                mapper.writeValue(file, verificationTask);
+            } catch (IOException ignored) {
 
+            }
+        } else {
+            return null;
         }
+
         return file;
     }
 }

@@ -86,19 +86,15 @@ public class VerificationTask implements Runnable {
      * Stores the output and exit code into the {@link VerificationTask} entry
      * as either a new {@link JBMCVerificationResult}, or a new {@link ESBMCVerificationResult} object.
      */
-    private void storeResult() throws InterruptedException {
+    private void storeResult(long taskId) throws InterruptedException {
         String tool = verificationToolInstance.getName();
 
         if (tool.equals("JBMC")) {
             final JsonStructure output = (JsonStructure) verificationToolInstance.readOutput();
             final int exitCode = verificationToolInstance.waitFor();
             verificationTasks().updateTaskResult(taskId, new JBMCVerificationResult(output, exitCode));
-
-        } else if (tool.equals("ESBMC")) {
-            final String output = (String) verificationToolInstance.readOutput();
-            final int exitCode = verificationToolInstance.waitFor();
-            verificationTasks().updateTaskResult(taskId, new ESBMCVerificationResult(output, exitCode));
         }
+        // ESBMC writes the outcome of verification in a file, which is stored in: environment.get("OUTPUT") + File.separator + taskId + File.separator + "output.log"
 
     }
 
@@ -106,10 +102,12 @@ public class VerificationTask implements Runnable {
     public void run() {
         try {
             // do the verification
-            verificationToolInstance.verifyCode(request);
-
-            // store the result
-            storeResult();
+            if (verificationToolInstance instanceof ESBMC) {
+                verificationToolInstance.verifyCode(taskId, request);
+            } else if (verificationToolInstance instanceof JBMC) {
+                verificationToolInstance.verifyCode(taskId, request);
+                storeResult(taskId);
+            }
 
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
@@ -120,8 +118,8 @@ public class VerificationTask implements Runnable {
         return taskId;
     }
 
-    public String getVerificationTool() {
-        return verificationToolInstance.getName();
+    public VerificationTool getVerificationTool() {
+        return verificationToolInstance;
     }
 
     public Request getRequest() {
