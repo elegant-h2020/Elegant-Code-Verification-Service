@@ -94,6 +94,8 @@ public class ESBMC implements VerificationTool {
 //        args.add("--compact-trace");
         args.add("--no-pointer-check");
         args.add("--unlimited-k-steps");
+        args.add("--timeout");
+        args.add("60s");
         String[] strArray = new String[args.size()];
         return args.toArray(strArray);
     }
