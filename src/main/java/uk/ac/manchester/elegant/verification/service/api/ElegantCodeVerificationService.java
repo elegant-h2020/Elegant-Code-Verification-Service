@@ -163,6 +163,27 @@ public class ElegantCodeVerificationService {
 
     }
 
+    /**
+     * Get the status of an entry.
+     */
+    @GET
+    @Path("getStatus")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getStatus(@QueryParam("entryId") String entryId) {
+        int id = Integer.parseInt(entryId);
+        VerificationTask task = verificationTasks.getTask(id);
+        if (task != null) {
+            return Response
+                    .status(Response.Status.ACCEPTED)
+                    .entity(task.getStatus())
+                    .build();
+        } else {
+            return Response
+                    .status(Response.Status.ACCEPTED)
+                    .entity("Invalid Entry!")
+                    .build();
+        }
+    }
 
     /**
      * Get the verification outcome of an entry.
@@ -198,15 +219,19 @@ public class ElegantCodeVerificationService {
     @Path("removeEntry")
     @Produces("text/plain")
     public Response removeEntry(@QueryParam("entryId") long entryId) {
-
-        VerificationTask deleted = verificationTasks.removeEntry(entryId);
-        Response.Status responseStatus = (deleted != null) ? Response.Status.FOUND : Response.Status.NOT_FOUND;
-        String responseMsg = (deleted != null) ? "Code verification entry (#" + entryId + ") has been deleted.\n" : "Invalid Entry.\n";
-        return Response
-                .status(responseStatus)
-                .type(MediaType.TEXT_PLAIN_TYPE)
-                .entity(responseMsg)
-                .build();
+        VerificationTask task = verificationTasks.getTask(entryId);
+        if (task != null) {
+            VerificationTask deleted = verificationTasks.removeEntry(entryId);
+            Response.Status responseStatus = (deleted != null) ? Response.Status.FOUND : Response.Status.NOT_FOUND;
+            String responseMsg = (deleted != null) ? "Code verification entry (#" + entryId + ") has been deleted.\n" : "Invalid Entry.\n";
+            return Response.status(responseStatus).type(MediaType.TEXT_PLAIN_TYPE).entity(responseMsg).build();
+        } else {
+            return Response
+                    .status(Response.Status.NOT_FOUND)
+                    .type(MediaType.TEXT_PLAIN)
+                    .entity("Invalid Entry!!")
+                    .build();
+        }
     }
 
     /**

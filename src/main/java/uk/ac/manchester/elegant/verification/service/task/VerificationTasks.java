@@ -21,7 +21,9 @@
 package uk.ac.manchester.elegant.verification.service.task;
 
 import uk.ac.manchester.elegant.verification.service.task.result.VerificationResult;
+import uk.ac.manchester.elegant.verification.service.tool.linux.ESBMC;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -61,7 +63,16 @@ public class VerificationTasks {
     }
 
     public VerificationTask removeEntry(long id) {
-        Long key = id;
+        if (tasks.get(id).getVerificationTool() instanceof ESBMC) {
+            File file = new File(getTask(id).getVerificationTool().getEnvironmentVariable("OUTPUT") + File.separator + id + File.separator + "output.log");
+            File parentFile = file.getParentFile();
+            if (file.exists()) {
+                file.delete();
+            }
+            if (parentFile.exists()) {
+                parentFile.delete();
+            }
+        }
         return tasks.remove(id);
     }
 }
