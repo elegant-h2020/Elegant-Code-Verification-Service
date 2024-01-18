@@ -125,7 +125,7 @@ Block_0:
     var_0_6 = allocateBufferProxy(var_0_112);
     var_0_7 = 0;
     var_0_8 = NES__Runtime__TupleBuffer__getBuffer(var_0_6);
-    var_0_9 = NES__Runtime__TupleBuffer__getNumberOfTuples(var_0_113);
+    var_0_9 = NES__Runtime__TupleBuffer__getNumberOfTuples(var_0_113); //100
     var_0_10 = NES__Runtime__TupleBuffer__getBuffer(var_0_113);
     var_0_11 = 0;
     // prepare block arguments
